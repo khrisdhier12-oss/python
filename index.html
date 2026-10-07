@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Python Web IDE</title>
+<title>Python IDE V7.2</title>
 
 <style>
 * {
@@ -25,45 +25,56 @@ header {
     background: #161b22;
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 10px 15px;
+    gap: 8px;
+    padding: 10px 14px;
     border-bottom: 1px solid #30363d;
 }
 
 header h1 {
+    margin: 0 15px 0 0;
     font-size: 18px;
-    margin-right: 20px;
+    white-space: nowrap;
 }
 
 button {
-    background: #238636;
-    color: white;
-    border: none;
-    padding: 9px 14px;
+    border: 0;
     border-radius: 6px;
-    cursor: pointer;
+    padding: 9px 13px;
+    color: white;
     font-weight: bold;
+    cursor: pointer;
 }
 
 button:hover {
     filter: brightness(1.15);
 }
 
-button.stop {
+.run {
+    background: #238636;
+}
+
+.stop {
     background: #da3633;
 }
 
-button.gray {
-    background: #30363d;
-}
-
-button.blue {
+.blue {
     background: #1f6feb;
 }
 
+.gray {
+    background: #30363d;
+}
+
+#status {
+    margin-left: auto;
+    color: #8b949e;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
 main {
-    display: flex;
     height: calc(100vh - 60px);
+    display: flex;
 }
 
 #sidebar {
@@ -75,16 +86,19 @@ main {
 }
 
 #sidebar h3 {
-    margin-top: 5px;
-    font-size: 14px;
     color: #8b949e;
+    font-size: 14px;
+    margin: 5px 0 12px;
 }
 
 .file {
     padding: 9px;
     border-radius: 6px;
-    cursor: pointer;
     margin-bottom: 3px;
+    cursor: pointer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .file:hover {
@@ -97,24 +111,25 @@ main {
 
 #workspace {
     flex: 1;
+    min-width: 0;
     display: flex;
     flex-direction: column;
-    min-width: 0;
 }
 
 #editorArea {
     flex: 1;
-    display: flex;
     min-height: 0;
+    display: flex;
     position: relative;
 }
 
 #lineNumbers {
-    width: 50px;
+    width: 52px;
+    flex-shrink: 0;
     background: #0d1117;
     color: #6e7681;
     text-align: right;
-    padding: 15px 8px;
+    padding: 15px 9px;
     font-family: Consolas, monospace;
     font-size: 14px;
     line-height: 21px;
@@ -125,6 +140,7 @@ main {
 #editorWrapper {
     position: relative;
     flex: 1;
+    min-width: 0;
     overflow: hidden;
 }
 
@@ -139,7 +155,6 @@ main {
     white-space: pre;
     overflow: auto;
     pointer-events: none;
-    color: #e6edf3;
 }
 
 #editor {
@@ -148,8 +163,8 @@ main {
     width: 100%;
     height: 100%;
     resize: none;
-    border: none;
-    outline: none;
+    border: 0;
+    outline: 0;
     background: transparent;
     color: transparent;
     caret-color: white;
@@ -166,14 +181,16 @@ main {
 #autocomplete {
     position: absolute;
     display: none;
+    top: 45px;
+    left: 20px;
+    z-index: 20;
+    min-width: 190px;
+    max-height: 230px;
+    overflow-y: auto;
     background: #161b22;
     border: 1px solid #30363d;
-    border-radius: 6px;
-    max-height: 220px;
-    overflow-y: auto;
-    z-index: 10;
-    min-width: 180px;
-    box-shadow: 0 8px 25px rgba(0,0,0,.5);
+    border-radius: 7px;
+    box-shadow: 0 8px 30px rgba(0,0,0,.5);
 }
 
 .autoItem {
@@ -181,8 +198,7 @@ main {
     cursor: pointer;
 }
 
-.autoItem:hover,
-.autoItem.selected {
+.autoItem:hover {
     background: #1f6feb;
 }
 
@@ -199,7 +215,8 @@ main {
 }
 
 #console {
-    height: 220px;
+    height: 230px;
+    flex-shrink: 0;
     background: #010409;
     border-top: 1px solid #30363d;
     display: flex;
@@ -207,27 +224,27 @@ main {
 }
 
 #consoleHeader {
-    padding: 8px 12px;
     background: #161b22;
+    padding: 8px 12px;
     color: #8b949e;
     font-size: 13px;
 }
 
 #output {
     flex: 1;
-    padding: 12px;
     overflow-y: auto;
+    padding: 12px;
     white-space: pre-wrap;
     font-family: Consolas, monospace;
     font-size: 13px;
 }
 
-.error {
-    color: #ff7b72;
-}
-
 .success {
     color: #7ee787;
+}
+
+.error {
+    color: #ff7b72;
 }
 
 .warning {
@@ -238,38 +255,22 @@ main {
     color: #79c0ff;
 }
 
-#status {
-    font-size: 13px;
-    color: #8b949e;
-    margin-left: auto;
-}
-
 #loading {
     position: fixed;
     inset: 0;
-    background: rgba(13,17,23,.96);
+    z-index: 1000;
+    background: rgba(13,17,23,.97);
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    flex-direction: column;
-    z-index: 100;
-}
-
-#loadingText {
-    font-size: 20px;
-    margin-bottom: 15px;
-}
-
-#loadingDetail {
-    color: #8b949e;
     text-align: center;
-    max-width: 700px;
-    padding: 0 20px;
+    padding: 20px;
 }
 
 .spinner {
-    width: 45px;
-    height: 45px;
+    width: 48px;
+    height: 48px;
     border: 4px solid #30363d;
     border-top-color: #58a6ff;
     border-radius: 50%;
@@ -283,38 +284,60 @@ main {
     }
 }
 
+#loadingText {
+    font-size: 20px;
+    margin-bottom: 12px;
+}
+
+#loadingDetail {
+    color: #8b949e;
+    max-width: 800px;
+    line-height: 1.5;
+    word-break: break-word;
+}
+
+#retryButton {
+    margin-top: 18px;
+    display: none;
+}
+
 .modal {
     position: fixed;
     inset: 0;
+    z-index: 2000;
     background: rgba(0,0,0,.7);
     display: none;
     align-items: center;
     justify-content: center;
-    z-index: 200;
 }
 
 .modalBox {
+    width: 400px;
+    max-width: 90%;
     background: #161b22;
     border: 1px solid #30363d;
     border-radius: 10px;
     padding: 20px;
-    width: 400px;
-    max-width: 90%;
 }
 
 .modalBox input {
     width: 100%;
     padding: 10px;
-    margin: 10px 0;
+    margin: 12px 0;
     background: #0d1117;
-    border: 1px solid #30363d;
     color: white;
+    border: 1px solid #30363d;
     border-radius: 6px;
 }
 
-@media(max-width:700px) {
+@media(max-width:800px) {
+
     #sidebar {
         width: 160px;
+    }
+
+    header h1 {
+        display: none;
     }
 
     #console {
@@ -326,50 +349,80 @@ main {
 
 <body>
 
+<!-- =====================================================
+     CHARGEMENT
+===================================================== -->
+
 <div id="loading">
+
     <div class="spinner"></div>
 
     <div id="loadingText">
-        Téléchargement de Pyodide…
+        Chargement de Pyodide…
     </div>
 
     <div id="loadingDetail">
-        Initialisation du moteur Python dans le navigateur…
+        Initialisation du moteur Python…
     </div>
 
-    <br>
-
-    <button id="retryButton" class="blue" style="display:none;">
+    <button
+        id="retryButton"
+        class="blue"
+    >
         Réessayer
     </button>
+
 </div>
+
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
 
 <header>
 
     <h1>🐍 Python IDE</h1>
 
-    <button id="runBtn">
+    <button
+        id="runBtn"
+        class="run"
+    >
         ▶ Exécuter
     </button>
 
-    <button id="stopBtn" class="stop">
+    <button
+        id="stopBtn"
+        class="stop"
+    >
         ■ Stop
     </button>
 
-    <button id="newBtn" class="blue">
-        + Nouveau
+    <button
+        id="newBtn"
+        class="blue"
+    >
+        ＋ Nouveau
     </button>
 
-    <button id="deleteBtn" class="stop">
+    <button
+        id="deleteBtn"
+        class="stop"
+    >
         🗑 Supprimer
     </button>
 
-    <button id="clearBtn" class="gray">
+    <button
+        id="clearBtn"
+        class="gray"
+    >
         Effacer console
     </button>
 
-    <button id="fullscreenBtn" class="gray">
-        ⛶ Plein écran
+    <button
+        id="fullscreenBtn"
+        class="gray"
+    >
+        ⛶
     </button>
 
     <span id="status">
@@ -377,6 +430,11 @@ main {
     </span>
 
 </header>
+
+
+<!-- =====================================================
+     INTERFACE
+===================================================== -->
 
 <main>
 
@@ -388,11 +446,14 @@ main {
 
     </aside>
 
+
     <section id="workspace">
 
         <div id="editorArea">
 
-            <div id="lineNumbers">1</div>
+            <div id="lineNumbers">
+                1
+            </div>
 
             <div id="editorWrapper">
 
@@ -412,6 +473,7 @@ main {
 
         </div>
 
+
         <div id="console">
 
             <div id="consoleHeader">
@@ -427,7 +489,14 @@ main {
 </main>
 
 
-<div id="modal" class="modal">
+<!-- =====================================================
+     MODAL NOUVEAU FICHIER
+===================================================== -->
+
+<div
+    id="modal"
+    class="modal"
+>
 
     <div class="modalBox">
 
@@ -439,11 +508,17 @@ main {
             placeholder="mon_script.py"
         >
 
-        <button id="createConfirm">
+        <button
+            id="createConfirm"
+            class="blue"
+        >
             Créer
         </button>
 
-        <button id="createCancel" class="gray">
+        <button
+            id="createCancel"
+            class="gray"
+        >
             Annuler
         </button>
 
@@ -454,18 +529,13 @@ main {
 
 <script>
 
-/* =========================================================
-   CONFIGURATION PYODIDE
-   ========================================================= */
+/* =====================================================
+   PYODIDE
+===================================================== */
 
 /*
-   IMPORTANT :
-
-   Ne pas remettre :
-
-   https://cdn.jsdelivr.net/pyodide/0.29.3/full/pyodide.js
-
-   On utilise ici l'URL CDN officielle actuellement documentée.
+   Version actuellement utilisée par la documentation
+   CDN officielle Pyodide.
 */
 
 const PYODIDE_VERSION = "v314.0.7";
@@ -475,13 +545,14 @@ const PYODIDE_BASE =
     PYODIDE_VERSION +
     "/full/";
 
-const PYODIDE_SCRIPT =
-    PYODIDE_BASE + "pyodide.js";
+const PYODIDE_MODULE =
+    PYODIDE_BASE +
+    "pyodide.mjs";
 
 
-/* =========================================================
+/* =====================================================
    VARIABLES
-   ========================================================= */
+===================================================== */
 
 let worker = null;
 
@@ -493,85 +564,88 @@ let currentFile = "main.py";
 
 let files = {};
 
-let autoIndex = 0;
+let runId = 0;
 
 
-/* =========================================================
+/* =====================================================
    ELEMENTS
-   ========================================================= */
+===================================================== */
 
-const editor = document.getElementById("editor");
-const highlight = document.getElementById("highlight");
-const lineNumbers = document.getElementById("lineNumbers");
-const filesDiv = document.getElementById("files");
-const output = document.getElementById("output");
-const status = document.getElementById("status");
+const editor =
+    document.getElementById("editor");
 
-const loading = document.getElementById("loading");
-const loadingText = document.getElementById("loadingText");
-const loadingDetail = document.getElementById("loadingDetail");
-const retryButton = document.getElementById("retryButton");
+const highlight =
+    document.getElementById("highlight");
 
-const autocomplete = document.getElementById("autocomplete");
+const lineNumbers =
+    document.getElementById("lineNumbers");
+
+const filesDiv =
+    document.getElementById("files");
+
+const output =
+    document.getElementById("output");
+
+const status =
+    document.getElementById("status");
+
+const loading =
+    document.getElementById("loading");
+
+const loadingText =
+    document.getElementById("loadingText");
+
+const loadingDetail =
+    document.getElementById("loadingDetail");
+
+const retryButton =
+    document.getElementById("retryButton");
+
+const autocomplete =
+    document.getElementById("autocomplete");
 
 
-/* =========================================================
-   AUTOCOMPLETION PYTHON
-   ========================================================= */
+/* =====================================================
+   AUTOCOMPLETION
+===================================================== */
 
-const pythonWords = [
-
-    "print",
-    "input",
-    "import",
-    "from",
-    "as",
-
-    "def",
-    "return",
-    "class",
-
-    "if",
-    "elif",
-    "else",
-
-    "for",
-    "while",
-    "break",
-    "continue",
-
-    "try",
-    "except",
-    "finally",
-    "raise",
-
-    "with",
-
-    "True",
-    "False",
-    "None",
+const pythonKeywords = [
 
     "and",
-    "or",
-    "not",
-
+    "as",
+    "assert",
+    "async",
+    "await",
+    "break",
+    "class",
+    "continue",
+    "def",
+    "del",
+    "elif",
+    "else",
+    "except",
+    "False",
+    "finally",
+    "for",
+    "from",
+    "global",
+    "if",
+    "import",
     "in",
     "is",
-
     "lambda",
-
-    "yield",
-
-    "pass",
-
-    "global",
+    "None",
     "nonlocal",
-
-    "assert",
-    "del",
-
-    "async",
-    "await"
+    "not",
+    "or",
+    "pass",
+    "raise",
+    "return",
+    "True",
+    "try",
+    "while",
+    "with",
+    "yield"
 
 ];
 
@@ -624,24 +698,28 @@ const pythonModules = [
 ];
 
 
-/* =========================================================
-   LOCALSTORAGE
-   ========================================================= */
+/* =====================================================
+   FICHIERS
+===================================================== */
 
 function loadFiles() {
 
     try {
 
         const saved =
-            localStorage.getItem("pythonIDE_files");
+            localStorage.getItem(
+                "pythonIDE_files"
+            );
 
         if (saved) {
 
-            files = JSON.parse(saved);
+            files =
+                JSON.parse(saved);
 
         }
 
-    } catch {
+    }
+    catch {
 
         files = {};
 
@@ -685,53 +763,11 @@ function saveFiles() {
 }
 
 
-/* =========================================================
-   FICHIERS
-   ========================================================= */
-
-function renderFiles() {
-
-    filesDiv.innerHTML = "";
-
-    Object.keys(files)
-        .sort()
-        .forEach(name => {
-
-            const div =
-                document.createElement("div");
-
-            div.className = "file";
-
-            if (name === currentFile) {
-
-                div.classList.add("active");
-
-            }
-
-            div.textContent = "🐍 " + name;
-
-            div.onclick = () => {
-
-                saveCurrentFile();
-
-                currentFile = name;
-
-                loadCurrentFile();
-
-                renderFiles();
-
-            };
-
-            filesDiv.appendChild(div);
-
-        });
-
-}
-
-
 function saveCurrentFile() {
 
-    if (!currentFile) return;
+    if (!currentFile) {
+        return;
+    }
 
     files[currentFile] =
         editor.value;
@@ -751,6 +787,53 @@ function loadCurrentFile() {
 }
 
 
+function renderFiles() {
+
+    filesDiv.innerHTML = "";
+
+    Object.keys(files)
+        .sort()
+        .forEach(name => {
+
+            const div =
+                document.createElement("div");
+
+            div.className =
+                "file";
+
+            if (
+                name === currentFile
+            ) {
+
+                div.classList.add(
+                    "active"
+                );
+
+            }
+
+            div.textContent =
+                "🐍 " + name;
+
+            div.onclick = () => {
+
+                saveCurrentFile();
+
+                currentFile =
+                    name;
+
+                loadCurrentFile();
+
+                renderFiles();
+
+            };
+
+            filesDiv.appendChild(div);
+
+        });
+
+}
+
+
 function createFile(name) {
 
     if (!name.endsWith(".py")) {
@@ -761,7 +844,9 @@ function createFile(name) {
 
     if (files[name]) {
 
-        alert("Ce fichier existe déjà.");
+        alert(
+            "Ce fichier existe déjà."
+        );
 
         return;
 
@@ -821,9 +906,9 @@ function deleteCurrentFile() {
 }
 
 
-/* =========================================================
+/* =====================================================
    EDITEUR
-   ========================================================= */
+===================================================== */
 
 function escapeHTML(text) {
 
@@ -840,69 +925,49 @@ function highlightPython(code) {
     let text =
         escapeHTML(code);
 
+    /*
+       Commentaires
+    */
+
     text = text.replace(
         /(#.*)$/gm,
         '<span style="color:#8b949e">$1</span>'
     );
 
+    /*
+       Strings
+    */
+
     text = text.replace(
-        /(["'])(.*?)(\1)/g,
-        '<span style="color:#a5d6ff">$1$2$3</span>'
+        /(["'])(.*?)\1/g,
+        '<span style="color:#a5d6ff">$1$2$1</span>'
     );
 
-    const keywords =
-        [
-            "def",
-            "return",
-            "if",
-            "elif",
-            "else",
-            "for",
-            "while",
-            "in",
-            "import",
-            "from",
-            "as",
-            "class",
-            "try",
-            "except",
-            "finally",
-            "with",
-            "raise",
-            "pass",
-            "break",
-            "continue",
-            "True",
-            "False",
-            "None",
-            "and",
-            "or",
-            "not",
-            "is",
-            "lambda",
-            "yield",
-            "async",
-            "await"
-        ];
+    /*
+       Mots-clés
+    */
 
-    keywords.forEach(word => {
+    pythonKeywords.forEach(
+        word => {
 
-        const regex =
-            new RegExp(
-                "\\b" +
-                word +
-                "\\b",
-                "g"
-            );
+            const regex =
+                new RegExp(
+                    "\\b" +
+                    word +
+                    "\\b",
+                    "g"
+                );
 
-        text = text.replace(
-            regex,
-            '<span style="color:#ff7b72">' +
-            word +
-            "</span>"
-        );
+            text =
+                text.replace(
+                    regex,
+                    '<span style="color:#ff7b72">' +
+                    word +
+                    "</span>"
+                );
 
-    });
+        }
+    );
 
     return text + "\n";
 
@@ -914,7 +979,7 @@ function updateLineNumbers() {
     const count =
         editor.value.split("\n").length;
 
-    let result = "";
+    let text = "";
 
     for (
         let i = 1;
@@ -922,12 +987,12 @@ function updateLineNumbers() {
         i++
     ) {
 
-        result += i + "\n";
+        text += i + "\n";
 
     }
 
     lineNumbers.textContent =
-        result;
+        text;
 
 }
 
@@ -935,7 +1000,9 @@ function updateLineNumbers() {
 function updateEditor() {
 
     highlight.innerHTML =
-        highlightPython(editor.value);
+        highlightPython(
+            editor.value
+        );
 
     updateLineNumbers();
 
@@ -945,23 +1012,31 @@ function updateEditor() {
     highlight.scrollLeft =
         editor.scrollLeft;
 
+    lineNumbers.scrollTop =
+        editor.scrollTop;
+
 }
 
 
-/* =========================================================
+/* =====================================================
    AUTOCOMPLETION
-   ========================================================= */
+===================================================== */
 
 function getCurrentWord() {
 
-    const pos =
+    const position =
         editor.selectionStart;
 
     const before =
-        editor.value.slice(0, pos);
+        editor.value.slice(
+            0,
+            position
+        );
 
     const match =
-        before.match(/[A-Za-z_][A-Za-z0-9_]*$/);
+        before.match(
+            /[A-Za-z_][A-Za-z0-9_]*$/
+        );
 
     return match
         ? match[0]
@@ -972,11 +1047,13 @@ function getCurrentWord() {
 
 function getSuggestions(word) {
 
-    if (!word) return [];
+    if (!word) {
+        return [];
+    }
 
     const all = [
 
-        ...pythonWords,
+        ...pythonKeywords,
         ...pythonFunctions,
         ...pythonModules
 
@@ -985,14 +1062,15 @@ function getSuggestions(word) {
     return [
         ...new Set(all)
     ]
-    .filter(item =>
-        item
-        .toLowerCase()
-        .startsWith(
-            word.toLowerCase()
-        )
+    .filter(
+        item =>
+            item
+            .toLowerCase()
+            .startsWith(
+                word.toLowerCase()
+            )
     )
-    .slice(0, 12);
+    .slice(0, 15);
 
 }
 
@@ -1005,7 +1083,9 @@ function showAutocomplete() {
     const suggestions =
         getSuggestions(word);
 
-    if (!suggestions.length) {
+    if (
+        !suggestions.length
+    ) {
 
         autocomplete.style.display =
             "none";
@@ -1017,10 +1097,12 @@ function showAutocomplete() {
     autocomplete.innerHTML = "";
 
     suggestions.forEach(
-        (item, index) => {
+        item => {
 
             const div =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
 
             div.className =
                 "autoItem";
@@ -1029,7 +1111,8 @@ function showAutocomplete() {
                 item;
 
             if (
-                pythonFunctions.includes(item)
+                pythonFunctions
+                    .includes(item)
             ) {
 
                 div.classList.add(
@@ -1038,7 +1121,8 @@ function showAutocomplete() {
 
             }
             else if (
-                pythonModules.includes(item)
+                pythonModules
+                    .includes(item)
             ) {
 
                 div.classList.add(
@@ -1054,22 +1138,18 @@ function showAutocomplete() {
 
             }
 
-            div.onclick = () =>
+            div.onclick = () => {
+
                 insertSuggestion(item);
 
-            autocomplete.appendChild(div);
+            };
+
+            autocomplete.appendChild(
+                div
+            );
 
         }
     );
-
-    const rect =
-        editor.getBoundingClientRect();
-
-    autocomplete.style.left =
-        "20px";
-
-    autocomplete.style.top =
-        "45px";
 
     autocomplete.style.display =
         "block";
@@ -1079,38 +1159,50 @@ function showAutocomplete() {
 
 function insertSuggestion(word) {
 
-    const pos =
+    const position =
         editor.selectionStart;
 
     const before =
-        editor.value.slice(0, pos);
+        editor.value.slice(
+            0,
+            position
+        );
 
     const after =
-        editor.value.slice(pos);
+        editor.value.slice(
+            position
+        );
 
     const match =
         before.match(
             /[A-Za-z_][A-Za-z0-9_]*$/
         );
 
-    if (!match) return;
+    if (!match) {
+        return;
+    }
 
     const start =
-        pos - match[0].length;
+        position -
+        match[0].length;
 
     editor.value =
-        editor.value.slice(0, start) +
+        editor.value.slice(
+            0,
+            start
+        ) +
         word +
         after;
 
-    const newPos =
-        start + word.length;
+    const newPosition =
+        start +
+        word.length;
 
     editor.selectionStart =
-        newPos;
+        newPosition;
 
     editor.selectionEnd =
-        newPos;
+        newPosition;
 
     autocomplete.style.display =
         "none";
@@ -1122,9 +1214,9 @@ function insertSuggestion(word) {
 }
 
 
-/* =========================================================
+/* =====================================================
    CONSOLE
-   ========================================================= */
+===================================================== */
 
 function printOutput(
     text,
@@ -1159,9 +1251,9 @@ function clearConsole() {
 }
 
 
-/* =========================================================
-   WORKER PYODIDE
-   ========================================================= */
+/* =====================================================
+   CREATION DU WORKER
+===================================================== */
 
 function createWorker() {
 
@@ -1175,40 +1267,21 @@ function createWorker() {
 
     pythonReady = false;
 
+    /*
+       Worker en module.
+
+       C'est la correction V7.2 :
+       on utilise import() au lieu de
+       importScripts().
+    */
+
     const workerCode = `
-
-        const PYODIDE_BASE =
-            "${PYODIDE_BASE}";
-
-        const PYODIDE_SCRIPT =
-            "${PYODIDE_SCRIPT}";
 
         let pyodide = null;
 
-        try {
-
-            importScripts(PYODIDE_SCRIPT);
-
-        } catch (error) {
-
-            self.postMessage({
-
-                type: "fatal",
-
-                message:
-                    "Impossible de charger Pyodide : " +
-                    error.message
-
-            });
-
-        }
-
-
         self.onmessage = async function(event) {
 
-            const data =
-                event.data;
-
+            const data = event.data;
 
             if (data.type === "init") {
 
@@ -1219,15 +1292,46 @@ function createWorker() {
                         type: "loading",
 
                         message:
-                            "Chargement du moteur Python…"
+                            "Téléchargement du moteur Python…"
+
+                    });
+
+                    /*
+                       Chargement de Pyodide
+                       comme module ES.
+                    */
+
+                    const pyodideModule =
+                        await import(
+                            "${PYODIDE_MODULE}"
+                        );
+
+                    if (
+                        !pyodideModule ||
+                        typeof pyodideModule.loadPyodide !== "function"
+                    ) {
+
+                        throw new Error(
+                            "Le module Pyodide a été chargé, " +
+                            "mais loadPyodide est introuvable."
+                        );
+
+                    }
+
+                    self.postMessage({
+
+                        type: "loading",
+
+                        message:
+                            "Initialisation de Python…"
 
                     });
 
                     pyodide =
-                        await loadPyodide({
+                        await pyodideModule.loadPyodide({
 
                             indexURL:
-                                PYODIDE_BASE
+                                "${PYODIDE_BASE}"
 
                         });
 
@@ -1238,15 +1342,20 @@ function createWorker() {
                     });
 
                 }
-                catch (error) {
+                catch(error) {
 
                     self.postMessage({
 
                         type: "fatal",
 
                         message:
-                            error.stack ||
-                            error.message
+                            error &&
+                            (
+                                error.stack ||
+                                error.message
+                            )
+                            ||
+                            String(error)
 
                     });
 
@@ -1266,7 +1375,7 @@ function createWorker() {
                         type: "error",
 
                         message:
-                            "Pyodide n'est pas prêt."
+                            "Python n'est pas prêt."
 
                     });
 
@@ -1276,31 +1385,59 @@ function createWorker() {
 
                 try {
 
+                    /*
+                       Capture de stdout.
+                    */
+
+                    let output = "";
+
+                    pyodide.setStdout({
+
+                        batched: text => {
+
+                            output += text;
+
+                        }
+
+                    });
+
                     const result =
                         await pyodide.runPythonAsync(
                             data.code
                         );
 
+                    if (
+                        result !== undefined &&
+                        result !== null
+                    ) {
+
+                        output +=
+                            String(result);
+
+                    }
+
                     self.postMessage({
 
                         type: "result",
 
-                        output:
-                            result === undefined
-                                ? ""
-                                : String(result)
+                        output: output
 
                     });
 
                 }
-                catch (error) {
+                catch(error) {
 
                     self.postMessage({
 
                         type: "error",
 
                         message:
-                            error.message ||
+                            error &&
+                            (
+                                error.message ||
+                                error.stack
+                            )
+                            ||
                             String(error)
 
                     });
@@ -1317,154 +1454,176 @@ function createWorker() {
         new Blob(
             [workerCode],
             {
-                type: "application/javascript"
+                type:
+                    "application/javascript"
             }
         );
 
-    const url =
+    const blobURL =
         URL.createObjectURL(blob);
+
+    /*
+       IMPORTANT :
+       type module permet d'utiliser
+       import() dans le Worker.
+    */
 
     worker =
         new Worker(
-            url,
+            blobURL,
             {
-                type: "classic"
+                type: "module"
             }
         );
 
-    worker.onerror = function(event) {
-
-        pythonReady = false;
-
-        status.textContent =
-            "❌ Erreur Worker";
-
-        loadingText.textContent =
-            "Erreur de chargement";
-
-        loadingDetail.innerHTML =
-            "<b>Le Worker Python n'a pas réussi à charger Pyodide.</b><br><br>" +
-            "Vérifie que la page est ouverte depuis GitHub Pages " +
-            "et non directement avec file://.<br><br>" +
-            "<small>" +
-            PYODIDE_SCRIPT +
-            "</small>";
-
-        retryButton.style.display =
-            "block";
-
-    };
-
-
-    worker.onmessageerror = function() {
-
-        printOutput(
-            "Erreur de communication avec le Worker.",
-            "error"
-        );
-
-    };
-
-
-    worker.onmessage = function(event) {
-
-        const data =
-            event.data;
-
-
-        if (data.type === "loading") {
-
-            loadingText.textContent =
-                "Chargement de Pyodide…";
-
-            loadingDetail.textContent =
-                data.message;
-
-        }
-
-
-        if (data.type === "ready") {
-
-            pythonReady = true;
-
-            loading.style.display =
-                "none";
-
-            status.textContent =
-                "🟢 Python prêt";
-
-            printOutput(
-                "Pyodide est prêt. Python peut maintenant être exécuté.",
-                "success"
-            );
-
-        }
-
-
-        if (data.type === "result") {
-
-            running = false;
-
-            status.textContent =
-                "🟢 Python prêt";
-
-            if (data.output) {
-
-                printOutput(
-                    data.output
-                );
-
-            }
-
-        }
-
-
-        if (data.type === "error") {
-
-            running = false;
-
-            status.textContent =
-                "❌ Erreur Python";
-
-            printOutput(
-                data.message,
-                "error"
-            );
-
-        }
-
-
-        if (data.type === "fatal") {
+    worker.onerror =
+        function(event) {
 
             pythonReady = false;
 
             status.textContent =
-                "❌ Pyodide indisponible";
+                "❌ Erreur Worker";
 
             loadingText.textContent =
-                "Impossible de charger Pyodide";
+                "Erreur du moteur Python";
 
             loadingDetail.innerHTML =
                 "<span class='error'>" +
                 escapeHTML(
-                    data.message
+                    event.message ||
+                    "Erreur inconnue du Worker."
                 ) +
-                "</span><br><br>" +
-
-                "CDN utilisé :<br>" +
-
-                "<small>" +
-                escapeHTML(
-                    PYODIDE_SCRIPT
-                ) +
-                "</small>";
+                "</span>";
 
             retryButton.style.display =
                 "block";
 
-        }
+        };
 
-    };
+
+    worker.onmessageerror =
+        function() {
+
+            printOutput(
+                "Erreur de communication avec Python.",
+                "error"
+            );
+
+        };
+
+
+    worker.onmessage =
+        function(event) {
+
+            const data =
+                event.data;
+
+
+            if (
+                data.type === "loading"
+            ) {
+
+                loadingText.textContent =
+                    "Chargement de Pyodide…";
+
+                loadingDetail.textContent =
+                    data.message;
+
+            }
+
+
+            if (
+                data.type === "ready"
+            ) {
+
+                pythonReady = true;
+
+                loading.style.display =
+                    "none";
+
+                status.textContent =
+                    "🟢 Python prêt";
+
+                printOutput(
+                    "✅ Python est prêt.",
+                    "success"
+                );
+
+            }
+
+
+            if (
+                data.type === "result"
+            ) {
+
+                running = false;
+
+                status.textContent =
+                    "🟢 Python prêt";
+
+                if (
+                    data.output
+                ) {
+
+                    printOutput(
+                        data.output
+                    );
+
+                }
+
+            }
+
+
+            if (
+                data.type === "error"
+            ) {
+
+                running = false;
+
+                status.textContent =
+                    "❌ Erreur Python";
+
+                printOutput(
+                    data.message,
+                    "error"
+                );
+
+            }
+
+
+            if (
+                data.type === "fatal"
+            ) {
+
+                pythonReady = false;
+
+                status.textContent =
+                    "❌ Pyodide indisponible";
+
+                loadingText.textContent =
+                    "Impossible de charger Python";
+
+                loadingDetail.innerHTML =
+                    "<span class='error'>" +
+                    escapeHTML(
+                        data.message
+                    ) +
+                    "</span><br><br>" +
+
+                    "Module utilisé :<br>" +
+
+                    "<small>" +
+                    escapeHTML(
+                        PYODIDE_MODULE
+                    ) +
+                    "</small>";
+
+                retryButton.style.display =
+                    "block";
+
+            }
+
+        };
 
 
     worker.postMessage({
@@ -1476,26 +1635,43 @@ function createWorker() {
 }
 
 
-/* =========================================================
-   VERIFICATION CDN
-   ========================================================= */
+/* =====================================================
+   TEST CDN
+===================================================== */
 
-async function testCDN() {
+async function startPython() {
 
-    loadingText.textContent =
-        "Vérification du CDN Pyodide…";
-
-    loadingDetail.textContent =
-        "Connexion à jsDelivr…";
+    loading.style.display =
+        "flex";
 
     retryButton.style.display =
         "none";
 
+    loadingText.textContent =
+        "Vérification de Pyodide…";
+
+    loadingDetail.textContent =
+        "Connexion au CDN…";
+
+    if (worker) {
+
+        worker.terminate();
+
+        worker = null;
+
+    }
+
+    pythonReady = false;
+
     try {
+
+        /*
+           Vérifie que le module existe.
+        */
 
         const response =
             await fetch(
-                PYODIDE_SCRIPT,
+                PYODIDE_MODULE,
                 {
                     method: "GET",
                     cache: "no-store"
@@ -1507,7 +1683,7 @@ async function testCDN() {
             throw new Error(
                 "HTTP " +
                 response.status +
-                " " +
+                " - " +
                 response.statusText
             );
 
@@ -1517,17 +1693,18 @@ async function testCDN() {
             "Téléchargement de Pyodide…";
 
         loadingDetail.textContent =
-            "Le CDN répond correctement. Initialisation du moteur Python…";
+            "Le CDN répond correctement. Démarrage du Worker Python…";
 
         createWorker();
 
     }
-    catch (error) {
+    catch(error) {
 
-        pythonReady = false;
+        status.textContent =
+            "❌ CDN inaccessible";
 
         loadingText.textContent =
-            "❌ Pyodide ne peut pas être téléchargé";
+            "Impossible de charger Pyodide";
 
         loadingDetail.innerHTML =
             "<span class='error'>" +
@@ -1536,35 +1713,30 @@ async function testCDN() {
             ) +
             "</span><br><br>" +
 
-            "Le navigateur n'arrive pas à accéder au CDN Pyodide.<br><br>" +
-
             "<small>" +
             escapeHTML(
-                PYODIDE_SCRIPT
+                PYODIDE_MODULE
             ) +
             "</small>";
 
         retryButton.style.display =
             "block";
 
-        status.textContent =
-            "❌ CDN inaccessible";
-
     }
 
 }
 
 
-/* =========================================================
+/* =====================================================
    EXECUTION
-   ========================================================= */
+===================================================== */
 
 function runCode() {
 
     if (!pythonReady) {
 
         printOutput(
-            "⏳ Pyodide n'est pas encore prêt.",
+            "⏳ Python n'est pas encore prêt.",
             "warning"
         );
 
@@ -1584,26 +1756,28 @@ function runCode() {
 
     running = true;
 
+    runId++;
+
     status.textContent =
         "🟡 Python en cours…";
-
-    const code =
-        editor.value;
 
     worker.postMessage({
 
         type: "run",
 
-        code: code
+        id: runId,
+
+        code:
+            editor.value
 
     });
 
 }
 
 
-/* =========================================================
-   STOP
-   ========================================================= */
+/* =====================================================
+   STOP RÉEL
+===================================================== */
 
 function stopCode() {
 
@@ -1618,7 +1792,19 @@ function stopCode() {
 
     }
 
+    /*
+       On tue complètement le Worker.
+
+       Cela permet notamment d'arrêter
+       une boucle infinie :
+
+       while True:
+           pass
+    */
+
     running = false;
+
+    pythonReady = false;
 
     if (worker) {
 
@@ -1628,58 +1814,67 @@ function stopCode() {
 
     }
 
-    pythonReady = false;
-
     status.textContent =
-        "🛑 Arrêté";
+        "🛑 Programme arrêté";
 
     printOutput(
-        "Programme arrêté.",
+        "🛑 Programme arrêté.",
         "warning"
     );
 
     /*
-       On recrée immédiatement le moteur.
+       Nouveau Worker propre.
     */
 
-    setTimeout(() => {
+    setTimeout(
+        () => {
 
-        testCDN();
+            startPython();
 
-    }, 100);
+        },
+        100
+    );
 
 }
 
 
-/* =========================================================
-   PLEIN ECRAN
-   ========================================================= */
+/* =====================================================
+   PLEIN ÉCRAN
+===================================================== */
 
-function fullscreen() {
+function toggleFullscreen() {
 
-    if (!document.fullscreenElement) {
+    if (
+        !document.fullscreenElement
+    ) {
 
         document.documentElement
             .requestFullscreen()
-            .catch(() => {});
+            .catch(
+                () => {}
+            );
 
     }
     else {
 
-        document.exitFullscreen();
+        document
+            .exitFullscreen()
+            .catch(
+                () => {}
+            );
 
     }
 
 }
 
 
-/* =========================================================
+/* =====================================================
    EVENEMENTS EDITEUR
-   ========================================================= */
+===================================================== */
 
 editor.addEventListener(
     "input",
-    () => {
+    function() {
 
         updateEditor();
 
@@ -1693,7 +1888,7 @@ editor.addEventListener(
 
 editor.addEventListener(
     "scroll",
-    () => {
+    function() {
 
         highlight.scrollTop =
             editor.scrollTop;
@@ -1710,7 +1905,11 @@ editor.addEventListener(
 
 editor.addEventListener(
     "keydown",
-    event => {
+    function(event) {
+
+        /*
+           TAB
+        */
 
         if (
             event.key === "Tab"
@@ -1747,6 +1946,10 @@ editor.addEventListener(
         }
 
 
+        /*
+           Entrée
+        */
+
         if (
             event.key === "Enter"
         ) {
@@ -1756,6 +1959,10 @@ editor.addEventListener(
 
         }
 
+
+        /*
+           Escape
+        */
 
         if (
             event.key === "Escape"
@@ -1770,9 +1977,9 @@ editor.addEventListener(
 );
 
 
-/* =========================================================
+/* =====================================================
    BOUTONS
-   ========================================================= */
+===================================================== */
 
 document
     .getElementById("runBtn")
@@ -1792,7 +1999,7 @@ document
 document
     .getElementById("fullscreenBtn")
     .onclick =
-        fullscreen;
+        toggleFullscreen;
 
 document
     .getElementById("deleteBtn")
@@ -1800,12 +2007,14 @@ document
         deleteCurrentFile;
 
 
-/* =========================================================
+/* =====================================================
    NOUVEAU FICHIER
-   ========================================================= */
+===================================================== */
 
 const modal =
-    document.getElementById("modal");
+    document.getElementById(
+        "modal"
+    );
 
 const filenameInput =
     document.getElementById(
@@ -1816,9 +2025,10 @@ const filenameInput =
 document
     .getElementById("newBtn")
     .onclick =
-        () => {
+        function() {
 
-            filenameInput.value = "";
+            filenameInput.value =
+                "";
 
             modal.style.display =
                 "flex";
@@ -1831,7 +2041,7 @@ document
 document
     .getElementById("createCancel")
     .onclick =
-        () => {
+        function() {
 
             modal.style.display =
                 "none";
@@ -1842,7 +2052,7 @@ document
 document
     .getElementById("createConfirm")
     .onclick =
-        () => {
+        function() {
 
             const name =
                 filenameInput.value.trim();
@@ -1863,7 +2073,7 @@ document
 
 filenameInput.addEventListener(
     "keydown",
-    event => {
+    function(event) {
 
         if (
             event.key === "Enter"
@@ -1881,54 +2091,25 @@ filenameInput.addEventListener(
 );
 
 
-/* =========================================================
+/* =====================================================
    RETRY
-   ========================================================= */
+===================================================== */
 
 retryButton.onclick =
-    () => {
+    function() {
 
-        loading.style.display =
-            "flex";
-
-        retryButton.style.display =
-            "none";
-
-        if (worker) {
-
-            worker.terminate();
-
-            worker = null;
-
-        }
-
-        testCDN();
+        startPython();
 
     };
 
 
-/* =========================================================
-   INITIALISATION
-   ========================================================= */
-
-loadFiles();
-
-renderFiles();
-
-loadCurrentFile();
-
-updateEditor();
-
-testCDN();
-
-
-/* =========================================================
-   RACCOURCI CTRL + ENTER
-   ========================================================= */
+/* =====================================================
+   CTRL + ENTER
+===================================================== */
 
 document.addEventListener(
     "keydown",
-    event => {
+    function(event) {
 
         if (
             event.ctrlKey &&
@@ -1943,6 +2124,21 @@ document.addEventListener(
 
     }
 );
+
+
+/* =====================================================
+   INITIALISATION
+===================================================== */
+
+loadFiles();
+
+renderFiles();
+
+loadCurrentFile();
+
+updateEditor();
+
+startPython();
 
 </script>
 
