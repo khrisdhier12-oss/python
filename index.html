@@ -4,9 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>🐍 Python IDE V6</title>
-
-<script src="https://cdn.jsdelivr.net/pyodide/v314.0.7/full/pyodide.js"></script>
+<title>🐍 Python IDE V7</title>
 
 <style>
 * {
@@ -19,14 +17,9 @@ body {
     width: 100%;
     height: 100%;
     overflow: hidden;
-
     background: #0d1117;
     color: #e6edf3;
-
-    font-family:
-        Consolas,
-        "Courier New",
-        monospace;
+    font-family: Consolas, "Courier New", monospace;
 }
 
 body {
@@ -35,7 +28,7 @@ body {
 }
 
 /* =========================================
-   BARRE DU HAUT
+   TOPBAR
 ========================================= */
 
 .topbar {
@@ -44,46 +37,31 @@ body {
 
     display: flex;
     align-items: center;
-
     gap: 7px;
+
     padding: 0 12px;
 
     background: #161b22;
-
-    border-bottom:
-        1px solid #30363d;
+    border-bottom: 1px solid #30363d;
 }
 
 .logo {
     font-size: 17px;
-
     font-weight: bold;
-
     margin-right: 12px;
-
     white-space: nowrap;
 }
 
 button {
-    border:
-        1px solid #30363d;
-
+    border: 1px solid #30363d;
     background: #21262d;
-
     color: #e6edf3;
 
-    padding:
-        7px 11px;
-
+    padding: 7px 11px;
     border-radius: 6px;
 
     cursor: pointer;
-
     font-family: inherit;
-
-    transition:
-        background .15s,
-        border-color .15s;
 }
 
 button:hover {
@@ -97,9 +75,7 @@ button:disabled {
 
 .run-btn {
     background: #238636;
-
-    border-color:
-        #2ea043;
+    border-color: #2ea043;
 }
 
 .run-btn:hover {
@@ -108,9 +84,7 @@ button:disabled {
 
 .stop-btn {
     background: #da3633;
-
-    border-color:
-        #f85149;
+    border-color: #f85149;
 }
 
 .stop-btn:hover {
@@ -123,30 +97,23 @@ button:disabled {
 
 .delete-btn:hover {
     background: #3d1618;
-
-    border-color:
-        #f85149;
+    border-color: #f85149;
 }
 
 .status {
     margin-left: auto;
-
     color: #8b949e;
-
     font-size: 12px;
-
     white-space: nowrap;
 }
 
 /* =========================================
-   STRUCTURE
+   MAIN
 ========================================= */
 
 .main {
     flex: 1;
-
     min-height: 0;
-
     display: flex;
 }
 
@@ -162,38 +129,31 @@ button:disabled {
     flex-direction: column;
 
     background: #0d1117;
-
-    border-right:
-        1px solid #30363d;
+    border-right: 1px solid #30363d;
 }
 
 .sidebar-title {
     height: 45px;
+    min-height: 45px;
 
     display: flex;
     align-items: center;
 
-    padding:
-        0 14px;
+    padding: 0 14px;
 
     font-weight: bold;
 
-    border-bottom:
-        1px solid #21262d;
+    border-bottom: 1px solid #21262d;
 }
 
 .file-list {
     flex: 1;
-
     overflow-y: auto;
-
     padding: 8px;
 }
 
 .file {
-    padding:
-        9px 10px;
-
+    padding: 9px 10px;
     margin-bottom: 2px;
 
     border-radius: 6px;
@@ -203,9 +163,7 @@ button:disabled {
     color: #c9d1d9;
 
     overflow: hidden;
-
     text-overflow: ellipsis;
-
     white-space: nowrap;
 }
 
@@ -215,7 +173,6 @@ button:disabled {
 
 .file.active {
     background: #1f6feb33;
-
     color: #58a6ff;
 }
 
@@ -225,22 +182,19 @@ button:disabled {
 
 .workspace {
     flex: 1;
-
     min-width: 0;
     min-height: 0;
 
     display: flex;
-
     flex-direction: column;
 }
 
 /* =========================================
-   EDITEUR
+   EDITOR
 ========================================= */
 
 .editor-container {
     flex: 1;
-
     min-height: 0;
 
     position: relative;
@@ -254,15 +208,13 @@ button:disabled {
     width: 55px;
     min-width: 55px;
 
-    padding:
-        15px 12px 15px 0;
+    padding: 15px 12px 15px 0;
 
     text-align: right;
 
     color: #484f58;
 
     font-size: 14px;
-
     line-height: 22px;
 
     overflow: hidden;
@@ -272,9 +224,7 @@ button:disabled {
 
 .editor {
     flex: 1;
-
     min-width: 0;
-
     min-height: 0;
 
     position: relative;
@@ -289,25 +239,16 @@ button:disabled {
     inset: 0;
 
     margin: 0;
-
-    padding:
-        15px 18px;
+    padding: 15px 18px;
 
     border: 0;
-
     outline: 0;
 
-    font-family:
-        Consolas,
-        "Courier New",
-        monospace;
-
+    font-family: Consolas, "Courier New", monospace;
     font-size: 14px;
-
     line-height: 22px;
 
     white-space: pre;
-
     tab-size: 4;
 
     overflow: auto;
@@ -338,7 +279,7 @@ button:disabled {
 }
 
 /* =========================================
-   COLORATION
+   PYTHON COLORS
 ========================================= */
 
 .syntax-keyword {
@@ -366,7 +307,7 @@ button:disabled {
 }
 
 /* =========================================
-   AUTOCOMPLETION
+   AUTOCOMPLETE
 ========================================= */
 
 .autocomplete {
@@ -377,27 +318,21 @@ button:disabled {
     display: none;
 
     min-width: 210px;
-
     max-width: 320px;
-
     max-height: 250px;
 
     overflow-y: auto;
 
     background: #161b22;
 
-    border:
-        1px solid #30363d;
-
+    border: 1px solid #30363d;
     border-radius: 6px;
 
-    box-shadow:
-        0 8px 25px rgba(0,0,0,.55);
+    box-shadow: 0 8px 25px rgba(0,0,0,.55);
 }
 
 .suggestion {
-    padding:
-        8px 10px;
+    padding: 8px 10px;
 
     cursor: pointer;
 
@@ -407,20 +342,17 @@ button:disabled {
 .suggestion:hover,
 .suggestion.selected {
     background: #1f6feb;
-
     color: white;
 }
 
 .suggestion-type {
     float: right;
-
     color: #8b949e;
-
     font-size: 10px;
 }
 
 /* =========================================
-   ERREUR
+   ERROR
 ========================================= */
 
 .error-panel {
@@ -430,19 +362,15 @@ button:disabled {
 
     left: 20px;
     right: 20px;
-
     bottom: 10px;
 
     display: none;
 
-    padding:
-        9px 12px;
+    padding: 9px 12px;
 
     background: #3d1618;
 
-    border:
-        1px solid #f85149;
-
+    border: 1px solid #f85149;
     border-radius: 6px;
 
     color: #ff7b72;
@@ -456,35 +384,28 @@ button:disabled {
 
 .bottom {
     height: 230px;
-
     min-height: 120px;
 
     display: flex;
-
     flex-direction: column;
 
     background: #010409;
 
-    border-top:
-        1px solid #30363d;
+    border-top: 1px solid #30363d;
 }
 
 .bottom-header {
     height: 38px;
-
     min-height: 38px;
 
     display: flex;
-
     align-items: center;
 
-    padding:
-        0 12px;
+    padding: 0 12px;
 
     background: #161b22;
 
-    border-bottom:
-        1px solid #30363d;
+    border-bottom: 1px solid #30363d;
 
     font-size: 13px;
 }
@@ -499,7 +420,6 @@ button:disabled {
     white-space: pre-wrap;
 
     font-size: 13px;
-
     line-height: 20px;
 }
 
@@ -516,7 +436,7 @@ button:disabled {
 }
 
 /* =========================================
-   CHARGEMENT
+   LOADING
 ========================================= */
 
 .loading-overlay {
@@ -527,11 +447,9 @@ button:disabled {
     z-index: 1000;
 
     display: flex;
-
     flex-direction: column;
 
     align-items: center;
-
     justify-content: center;
 
     gap: 15px;
@@ -541,7 +459,6 @@ button:disabled {
 
 .loading-title {
     font-size: 23px;
-
     font-weight: bold;
 }
 
@@ -551,7 +468,6 @@ button:disabled {
 
 .progress {
     width: 320px;
-
     height: 8px;
 
     overflow: hidden;
@@ -563,17 +479,15 @@ button:disabled {
 
 .progress-bar {
     width: 0%;
-
     height: 100%;
 
     background: #238636;
 
-    transition:
-        width .3s;
+    transition: width .3s;
 }
 
 /* =========================================
-   PLEIN ECRAN
+   FULLSCREEN
 ========================================= */
 
 .fullscreen .sidebar {
@@ -585,7 +499,7 @@ button:disabled {
 }
 
 /* =========================================
-   MOBILE
+   RESPONSIVE
 ========================================= */
 
 @media (max-width: 800px) {
@@ -600,8 +514,7 @@ button:disabled {
     }
 
     .topbar button {
-        padding:
-            6px 8px;
+        padding: 6px 8px;
     }
 
     .status {
@@ -614,7 +527,7 @@ button:disabled {
 <body>
 
 <!-- =========================================
-     CHARGEMENT
+     LOADING
 ========================================= -->
 
 <div
@@ -623,47 +536,41 @@ button:disabled {
 >
 
     <div class="loading-title">
-        🐍 Chargement de Python...
+        🐍 Chargement de Python V7...
     </div>
 
     <div
         class="loading-text"
         id="loadingText"
     >
-        Initialisation de Pyodide...
+        Création du Web Worker...
     </div>
 
     <div class="progress">
-
         <div
             class="progress-bar"
             id="progressBar"
         ></div>
-
     </div>
 
 </div>
 
 
 <!-- =========================================
-     BARRE
+     TOPBAR
 ========================================= -->
 
 <div class="topbar">
 
     <div class="logo">
-        🐍 Python IDE V6
+        🐍 Python IDE V7
     </div>
 
-    <button
-        onclick="newFile()"
-    >
+    <button onclick="newFile()">
         📄 Nouveau
     </button>
 
-    <button
-        onclick="saveFile()"
-    >
+    <button onclick="saveFile()">
         💾 Sauvegarder
     </button>
 
@@ -678,6 +585,7 @@ button:disabled {
         class="run-btn"
         id="runButton"
         onclick="runCode()"
+        disabled
     >
         ▶ Exécuter
     </button>
@@ -691,15 +599,11 @@ button:disabled {
         ⏹ Arrêter
     </button>
 
-    <button
-        onclick="clearConsole()"
-    >
+    <button onclick="clearConsole()">
         🧹 Console
     </button>
 
-    <button
-        onclick="toggleFullscreen()"
-    >
+    <button onclick="toggleFullscreen()">
         ⛶ Plein écran
     </button>
 
@@ -714,12 +618,10 @@ button:disabled {
 
 
 <!-- =========================================
-     PRINCIPAL
+     MAIN
 ========================================= -->
 
 <div class="main">
-
-    <!-- SIDEBAR -->
 
     <div class="sidebar">
 
@@ -735,11 +637,9 @@ button:disabled {
     </div>
 
 
-    <!-- WORKSPACE -->
-
     <div class="workspace">
 
-        <!-- EDITEUR -->
+        <!-- EDITOR -->
 
         <div class="editor-container">
 
@@ -762,10 +662,6 @@ button:disabled {
                     autocomplete="off"
                     autocorrect="off"
                     autocapitalize="off"
-                    oninput="onCodeInput()"
-                    onscroll="syncScroll()"
-                    onkeydown="handleEditorKeydown(event)"
-                    onkeyup="handleEditorKeyup(event)"
                 ></textarea>
 
                 <div
@@ -796,7 +692,7 @@ button:disabled {
                 id="console"
             >
                 <span class="console-info">
-                    Chargement de Python...
+                    Initialisation...
                 </span>
             </div>
 
@@ -810,22 +706,45 @@ button:disabled {
 <script>
 
 /* =========================================
+   CONFIGURATION
+========================================= */
+
+const PYODIDE_VERSION = "v314.0.7";
+
+const PYODIDE_URL =
+    "https://cdn.jsdelivr.net/pyodide/" +
+    PYODIDE_VERSION +
+    "/full/pyodide.js";
+
+const PYODIDE_INDEX =
+    "https://cdn.jsdelivr.net/pyodide/" +
+    PYODIDE_VERSION +
+    "/full/";
+
+const FILES_KEY =
+    "python_ide_v7_files";
+
+
+/* =========================================
    VARIABLES
 ========================================= */
 
-let pyodide = null;
+let worker = null;
 
-let pythonReady = false;
+let workerReady = false;
 
 let running = false;
 
-let stopRequested = false;
-
 let currentFile = "main.py";
 
-const FILES_KEY =
-    "python_ide_v6_files";
+let runTimer = null;
 
+let runId = 0;
+
+
+/* =========================================
+   ELEMENTS
+========================================= */
 
 const code =
     document.getElementById("code");
@@ -945,658 +864,615 @@ const suggestions = [
 
 
 /* =========================================
-   MOT COURANT
+   WORKER CODE
 ========================================= */
 
-function getCurrentWord() {
+function createWorker() {
 
-    const cursor =
-        code.selectionStart;
+    const workerCode = `
 
-    const before =
-        code.value.substring(
-            0,
-            cursor
-        );
+        let pyodide = null;
 
-    const match =
-        before.match(
-            /[A-Za-z_][A-Za-z0-9_]*$/
-        );
+        const PYODIDE_URL =
+            "${PYODIDE_URL}";
 
-    return match
-        ? match[0]
-        : "";
-}
+        const PYODIDE_INDEX =
+            "${PYODIDE_INDEX}";
 
 
-/* =========================================
-   AUTOCOMPLETION
-========================================= */
-
-function showAutocomplete() {
-
-    const word =
-        getCurrentWord();
-
-    if (!word) {
-
-        hideAutocomplete();
-
-        return;
-    }
+        self.postMessage({
+            type: "loading",
+            text: "Téléchargement de Pyodide...",
+            progress: 20
+        });
 
 
-    const results =
-        suggestions
-            .filter(
-                item =>
-                    item
-                        .toLowerCase()
-                        .startsWith(
-                            word.toLowerCase()
-                        )
-            )
-            .slice(
-                0,
-                10
-            );
+        importScripts(PYODIDE_URL);
 
 
-    if (!results.length) {
+        async function initialize() {
 
-        hideAutocomplete();
+            try {
 
-        return;
-    }
-
-
-    autocomplete.innerHTML =
-        "";
-
-
-    results.forEach(
-        function(item, index) {
-
-            const div =
-                document.createElement(
-                    "div"
-                );
-
-            div.className =
-                "suggestion";
+                self.postMessage({
+                    type: "loading",
+                    text: "Initialisation de Python...",
+                    progress: 50
+                });
 
 
-            if (index === 0) {
+                pyodide = await loadPyodide({
 
-                div.classList.add(
-                    "selected"
-                );
+                    indexURL:
+                        PYODIDE_INDEX
+
+                });
+
+
+                pyodide.setStdout({
+
+                    batched: function(text) {
+
+                        self.postMessage({
+
+                            type: "stdout",
+
+                            text: text
+
+                        });
+
+                    }
+
+                });
+
+
+                pyodide.setStderr({
+
+                    batched: function(text) {
+
+                        self.postMessage({
+
+                            type: "stderr",
+
+                            text: text
+
+                        });
+
+                    }
+
+                });
+
+
+                pyodide.setStdin({
+
+                    stdin: function() {
+
+                        self.postMessage({
+
+                            type: "input"
+
+                        });
+
+                        return "";
+
+                    }
+
+                });
+
+
+                self.postMessage({
+
+                    type: "ready"
+
+                });
+
+            }
+
+            catch(error) {
+
+                self.postMessage({
+
+                    type: "worker-error",
+
+                    error:
+                        String(error)
+
+                });
+
+            }
+
+        }
+
+
+        async function execute(code, id) {
+
+            if (!pyodide) {
+
+                self.postMessage({
+
+                    type: "error",
+
+                    id: id,
+
+                    error:
+                        "Python n'est pas prêt."
+
+                });
+
+                return;
             }
 
 
-            div.innerHTML =
-                escapeHtml(item) +
-                '<span class="suggestion-type">Python</span>';
+            try {
+
+                /*
+                   Vérification syntaxique
+                */
+
+                await pyodide.runPythonAsync(
+
+                    "compile(" +
+                    JSON.stringify(code) +
+                    ", '<editor>', 'exec')"
+
+                );
 
 
-            div.addEventListener(
-                "mousedown",
-                function(event) {
+                self.postMessage({
 
-                    event.preventDefault();
+                    type: "syntax-ok",
 
-                    insertSuggestion(
-                        item
-                    );
-                }
-            );
+                    id: id
+
+                });
 
 
-            autocomplete.appendChild(
-                div
-            );
+                /*
+                   Exécution réelle
+                */
+
+                await pyodide.runPythonAsync(
+                    code
+                );
+
+
+                self.postMessage({
+
+                    type: "done",
+
+                    id: id
+
+                });
+
+            }
+
+            catch(error) {
+
+                self.postMessage({
+
+                    type: "error",
+
+                    id: id,
+
+                    error:
+                        String(error)
+
+                });
+
+            }
+
         }
+
+
+        self.onmessage = function(event) {
+
+            const data =
+                event.data;
+
+
+            if (
+                data.type === "run"
+            ) {
+
+                execute(
+                    data.code,
+                    data.id
+                );
+
+            }
+
+        };
+
+
+        initialize();
+
+    `;
+
+
+    const blob =
+        new Blob(
+            [workerCode],
+            {
+                type:
+                    "application/javascript"
+            }
+        );
+
+
+    const url =
+        URL.createObjectURL(
+            blob
+        );
+
+
+    const newWorker =
+        new Worker(
+            url
+        );
+
+
+    URL.revokeObjectURL(
+        url
     );
 
 
-    positionAutocomplete();
-
-    autocomplete.style.display =
-        "block";
-}
-
-
-function hideAutocomplete() {
-
-    autocomplete.style.display =
-        "none";
-}
-
-
-function positionAutocomplete() {
-
-    const cursor =
-        code.selectionStart;
-
-    const before =
-        code.value.substring(
-            0,
-            cursor
-        );
-
-    const lines =
-        before.split("\n");
-
-    const line =
-        lines.length - 1;
-
-    const column =
-        lines[
-            lines.length - 1
-        ].length;
-
-    const lineHeight =
-        22;
-
-    const charWidth =
-        8.4;
-
-
-    autocomplete.style.left =
-        (
-            18 +
-            column *
-            charWidth
-        ) +
-        "px";
-
-
-    autocomplete.style.top =
-        (
-            15 +
-            (line + 1) *
-            lineHeight
-        ) +
-        "px";
-}
-
-
-function insertSuggestion(word) {
-
-    const cursor =
-        code.selectionStart;
-
-    const before =
-        code.value.substring(
-            0,
-            cursor
-        );
-
-    const match =
-        before.match(
-            /[A-Za-z_][A-Za-z0-9_]*$/
-        );
-
-
-    if (!match) {
-        return;
-    }
-
-
-    const start =
-        cursor -
-        match[0].length;
-
-
-    code.value =
-        code.value.substring(
-            0,
-            start
-        ) +
-        word +
-        code.value.substring(
-            cursor
-        );
-
-
-    code.selectionStart =
-        code.selectionEnd =
-            start +
-            word.length;
-
-
-    hideAutocomplete();
-
-    onCodeInput();
-
-    code.focus();
+    return newWorker;
 }
 
 
 /* =========================================
-   CLAVIER
+   DEMARRER LE WORKER
 ========================================= */
 
-function handleEditorKeydown(event) {
+function initializeWorker() {
 
-    /* TAB */
-
-    if (event.key === "Tab") {
-
-        event.preventDefault();
+    workerReady =
+        false;
 
 
-        const start =
-            code.selectionStart;
-
-        const end =
-            code.selectionEnd;
+    loadingText.textContent =
+        "Création du Web Worker...";
 
 
-        code.value =
-            code.value.substring(
-                0,
-                start
-            ) +
-            "    " +
-            code.value.substring(
-                end
+    progressBar.style.width =
+        "10%";
+
+
+    worker =
+        createWorker();
+
+
+    worker.onmessage =
+        handleWorkerMessage;
+
+
+    worker.onerror =
+        function(error) {
+
+            console.error(
+                error
             );
 
 
-        code.selectionStart =
-            code.selectionEnd =
-                start + 4;
+            workerReady =
+                false;
 
 
-        onCodeInput();
-
-        return;
-    }
+            statusElement.textContent =
+                "🔴 Worker arrêté";
 
 
-    /* ENTER */
+            consoleWrite(
+                "\n❌ Erreur du Worker : " +
+                error.message +
+                "\n",
 
-    if (event.key === "Enter") {
-
-        hideAutocomplete();
-
-
-        const start =
-            code.selectionStart;
-
-
-        const before =
-            code.value.substring(
-                0,
-                start
+                "console-error"
             );
-
-
-        const currentLine =
-            before
-                .split("\n")
-                .pop();
-
-
-        const match =
-            currentLine.match(
-                /^\s*/
-            );
-
-
-        const indentation =
-            match
-                ? match[0]
-                : "";
-
-
-        const extraIndent =
-            currentLine
-                .trim()
-                .endsWith(":")
-                ? "    "
-                : "";
-
-
-        event.preventDefault();
-
-
-        const insertion =
-            "\n" +
-            indentation +
-            extraIndent;
-
-
-        code.value =
-            code.value.substring(
-                0,
-                start
-            ) +
-            insertion +
-            code.value.substring(
-                code.selectionEnd
-            );
-
-
-        const position =
-            start +
-            insertion.length;
-
-
-        code.selectionStart =
-            code.selectionEnd =
-                position;
-
-
-        onCodeInput();
-
-        return;
-    }
-
-
-    if (event.key === "Escape") {
-
-        hideAutocomplete();
-    }
+        };
 }
 
 
-function handleEditorKeyup(event) {
+/* =========================================
+   MESSAGES WORKER
+========================================= */
+
+function handleWorkerMessage(event) {
+
+    const data =
+        event.data;
+
+
+    /* LOADING */
 
     if (
-        event.key.length === 1 ||
-        event.key === "Backspace" ||
-        event.key === "Delete"
+        data.type ===
+        "loading"
     ) {
 
-        showAutocomplete();
+        loadingText.textContent =
+            data.text;
+
+
+        progressBar.style.width =
+            data.progress +
+            "%";
+
+
+        return;
     }
-}
 
 
-/* =========================================
-   INPUT
-========================================= */
+    /* READY */
 
-function onCodeInput() {
+    if (
+        data.type ===
+        "ready"
+    ) {
 
-    updateLineNumbers();
-
-    updateHighlight();
-
-    saveLocal();
-
-    hideError();
+        workerReady =
+            true;
 
 
-    clearTimeout(
-        window.checkTimer
-    );
+        progressBar.style.width =
+            "100%";
 
 
-    window.checkTimer =
+        loadingText.textContent =
+            "Python est prêt !";
+
+
+        statusElement.textContent =
+            "🟢 Python prêt";
+
+
+        runButton.disabled =
+            false;
+
+
+        consoleWrite(
+            "✓ Python chargé dans le Web Worker.\n",
+
+            "console-success"
+        );
+
+
         setTimeout(
             function() {
 
-                checkSyntax();
+                loadingOverlay.style.display =
+                    "none";
 
             },
             400
         );
-}
 
-
-/* =========================================
-   SCROLL
-========================================= */
-
-function syncScroll() {
-
-    highlight.scrollTop =
-        code.scrollTop;
-
-    highlight.scrollLeft =
-        code.scrollLeft;
-
-    lineNumbers.scrollTop =
-        code.scrollTop;
-}
-
-
-/* =========================================
-   LIGNES
-========================================= */
-
-function updateLineNumbers() {
-
-    const count =
-        code.value
-            .split("\n")
-            .length;
-
-
-    let html = "";
-
-
-    for (
-        let i = 1;
-        i <= count;
-        i++
-    ) {
-
-        html +=
-            i +
-            "<br>";
-    }
-
-
-    lineNumbers.innerHTML =
-        html;
-}
-
-
-/* =========================================
-   HTML ESCAPE
-========================================= */
-
-function escapeHtml(text) {
-
-    return text
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        );
-}
-
-
-/* =========================================
-   COLORATION PYTHON
-========================================= */
-
-function updateHighlight() {
-
-    let text =
-        code.value;
-
-
-    if (!text) {
-
-        highlight.innerHTML =
-            "";
 
         return;
     }
 
 
-    let escaped =
-        escapeHtml(text);
-
-
-    const tokens = [];
-
-
-    /*
-       Protège les chaînes et commentaires
-    */
-
-    escaped =
-        escaped.replace(
-            /(#.*|"[^"\n]*"|'[^'\n]*')/g,
-
-            function(match) {
-
-                const id =
-                    tokens.length;
-
-
-                tokens.push(
-                    match
-                );
-
-
-                return (
-                    "___TOKEN_" +
-                    id +
-                    "___"
-                );
-            }
-        );
-
-
-    /*
-       Mots-clés
-    */
-
-    escaped =
-        escaped.replace(
-            /\b(and|as|assert|async|await|break|case|class|continue|def|del|elif|else|except|finally|for|from|global|if|import|in|is|lambda|match|nonlocal|not|or|pass|raise|return|try|while|with|yield)\b/g,
-
-            '<span class="syntax-keyword">$1</span>'
-        );
-
-
-    /*
-       Fonctions Python
-    */
-
-    escaped =
-        escaped.replace(
-            /\b(print|input|len|range|str|int|float|bool|list|dict|set|tuple|open|sum|min|max|abs|round|enumerate|zip|map|filter|sorted|type|isinstance|super|property)\b/g,
-
-            '<span class="syntax-builtin">$1</span>'
-        );
-
-
-    /*
-       Booléens
-    */
-
-    escaped =
-        escaped.replace(
-            /\b(True|False|None)\b/g,
-
-            '<span class="syntax-boolean">$1</span>'
-        );
-
-
-    /*
-       Nombres
-    */
-
-    escaped =
-        escaped.replace(
-            /\b\d+(?:\.\d+)?\b/g,
-
-            '<span class="syntax-number">$&</span>'
-        );
-
-
-    /*
-       Restaurer
-    */
-
-    escaped =
-        escaped.replace(
-            /___TOKEN_(\d+)___/g,
-
-            function(_, id) {
-
-                const token =
-                    tokens[
-                        Number(id)
-                    ];
-
-
-                if (
-                    token.startsWith("#")
-                ) {
-
-                    return (
-                        '<span class="syntax-comment">' +
-                        token +
-                        "</span>"
-                    );
-                }
-
-
-                return (
-                    '<span class="syntax-string">' +
-                    token +
-                    "</span>"
-                );
-            }
-        );
-
-
-    highlight.innerHTML =
-        escaped +
-        "\n";
-}
-
-
-/* =========================================
-   ERREUR
-========================================= */
-
-function showError(message) {
-
-    errorPanel.textContent =
-        message;
-
-    errorPanel.style.display =
-        "block";
-}
-
-
-function hideError() {
-
-    errorPanel.style.display =
-        "none";
-}
-
-
-/* =========================================
-   VERIFICATION SYNTAXE
-========================================= */
-
-async function checkSyntax() {
+    /* STDOUT */
 
     if (
-        !pythonReady ||
-        !pyodide
+        data.type ===
+        "stdout"
     ) {
 
-        return true;
+        consoleWrite(
+            data.text
+        );
+
+
+        return;
+    }
+
+
+    /* STDERR */
+
+    if (
+        data.type ===
+        "stderr"
+    ) {
+
+        consoleWrite(
+            data.text,
+            "console-error"
+        );
+
+
+        return;
+    }
+
+
+    /* INPUT */
+
+    if (
+        data.type ===
+        "input"
+    ) {
+
+        /*
+           Le prompt ne peut pas être
+           directement transmis depuis
+           le Worker au navigateur.
+        */
+
+        const answer =
+            prompt(
+                "Python input() :"
+            );
+
+
+        if (
+            worker &&
+            running
+        ) {
+
+            worker.postMessage({
+
+                type:
+                    "input-response",
+
+                value:
+                    answer === null
+                        ? ""
+                        : answer
+
+            });
+
+        }
+
+
+        return;
+    }
+
+
+    /* SYNTAX OK */
+
+    if (
+        data.type ===
+        "syntax-ok"
+    ) {
+
+        hideError();
+
+        return;
+    }
+
+
+    /* FIN */
+
+    if (
+        data.type ===
+        "done"
+    ) {
+
+        finishRun(
+            true
+        );
+
+        return;
+    }
+
+
+    /* ERREUR */
+
+    if (
+        data.type ===
+        "error"
+    ) {
+
+        showPythonError(
+            data.error
+        );
+
+
+        finishRun(
+            false
+        );
+
+
+        return;
+    }
+
+
+    /* WORKER ERROR */
+
+    if (
+        data.type ===
+        "worker-error"
+    ) {
+
+        workerReady =
+            false;
+
+
+        loadingOverlay.style.display =
+            "none";
+
+
+        statusElement.textContent =
+            "🔴 Erreur Python";
+
+
+        consoleWrite(
+            "\n❌ " +
+            data.error +
+            "\n",
+
+            "console-error"
+        );
+    }
+}
+
+
+/* =========================================
+   ERREUR PYTHON
+========================================= */
+
+function showPythonError(
+    message
+) {
+
+    let line =
+        "?";
+
+
+    const match =
+        message.match(
+            /line\s+(\d+)/i
+        );
+
+
+    if (match) {
+
+        line =
+            match[1];
+    }
+
+
+    showError(
+        "❌ Ligne " +
+        line +
+        " : " +
+        message
+    );
+
+
+    consoleWrite(
+        "\n❌ " +
+        message +
+        "\n",
+
+        "console-error"
+    );
+}
+
+
+/* =========================================
+   EXECUTION
+========================================= */
+
+function runCode() {
+
+    if (
+        !workerReady ||
+        !worker
+    ) {
+
+        consoleWrite(
+            "⏳ Python n'est pas encore prêt.\n",
+
+            "console-error"
+        );
+
+        return;
+    }
+
+
+    if (running) {
+        return;
     }
 
 
@@ -1606,57 +1482,238 @@ async function checkSyntax() {
 
     if (!source.trim()) {
 
-        hideError();
+        consoleWrite(
+            "⚠️ Le fichier est vide.\n",
 
-        return true;
+            "console-error"
+        );
+
+        return;
     }
 
 
-    try {
+    /*
+       Sauvegarde automatique
+    */
 
-        await pyodide.runPythonAsync(
-            "compile(" +
-            JSON.stringify(source) +
-            ", '<editor>', 'exec')"
+    saveLocal();
+
+
+    /*
+       Nouvelle exécution
+    */
+
+    runId++;
+
+
+    const currentRun =
+        runId;
+
+
+    running =
+        true;
+
+
+    runButton.disabled =
+        true;
+
+
+    stopButton.disabled =
+        false;
+
+
+    statusElement.textContent =
+        "🟡 Exécution...";
+
+
+    hideError();
+
+
+    clearConsole();
+
+
+    consoleWrite(
+        "▶ Exécution de " +
+        currentFile +
+        "...\n",
+
+        "console-info"
+    );
+
+
+    /*
+       Timeout de sécurité :
+       30 secondes
+    */
+
+    runTimer =
+        setTimeout(
+            function() {
+
+                if (
+                    running &&
+                    currentRun ===
+                    runId
+                ) {
+
+                    consoleWrite(
+                        "\n⏱️ Temps limite atteint (30 secondes).\n",
+
+                        "console-error"
+                    );
+
+
+                    stopCode();
+                }
+
+            },
+            30000
         );
 
 
-        hideError();
+    worker.postMessage({
 
-        return true;
+        type:
+            "run",
 
-    } catch (error) {
+        code:
+            source,
 
-        const message =
-            String(error);
+        id:
+            currentRun
 
-
-        let line =
-            "?";
-
-
-        const match =
-            message.match(
-                /line\s+(\d+)/i
-            );
+    });
+}
 
 
-        if (match) {
+/* =========================================
+   ARRET REEL
+========================================= */
 
-            line =
-                match[1];
-        }
+function stopCode() {
+
+    if (!running) {
+        return;
+    }
 
 
-        showError(
-            "❌ Ligne " +
-            line +
-            " : " +
-            message
+    /*
+       Invalide l'exécution actuelle
+    */
+
+    runId++;
+
+
+    /*
+       Arrêt immédiat du Worker
+    */
+
+    if (worker) {
+
+        worker.terminate();
+
+        worker =
+            null;
+    }
+
+
+    running =
+        false;
+
+
+    workerReady =
+        false;
+
+
+    clearTimeout(
+        runTimer
+    );
+
+
+    runTimer =
+        null;
+
+
+    runButton.disabled =
+        true;
+
+
+    stopButton.disabled =
+        true;
+
+
+    statusElement.textContent =
+        "🟠 Arrêté";
+
+
+    consoleWrite(
+        "\n⏹ Programme arrêté.\n",
+
+        "console-error"
+    );
+
+
+    /*
+       Recrée un nouveau Worker
+       pour pouvoir continuer à utiliser Python.
+    */
+
+    setTimeout(
+        function() {
+
+            initializeWorker();
+
+        },
+        100
+    );
+}
+
+
+/* =========================================
+   FIN EXECUTION
+========================================= */
+
+function finishRun(
+    success
+) {
+
+    if (!running) {
+        return;
+    }
+
+
+    running =
+        false;
+
+
+    clearTimeout(
+        runTimer
+    );
+
+
+    runTimer =
+        null;
+
+
+    runButton.disabled =
+        false;
+
+
+    stopButton.disabled =
+        true;
+
+
+    statusElement.textContent =
+        "🟢 Python prêt";
+
+
+    if (success) {
+
+        consoleWrite(
+            "\n✓ Programme terminé.\n",
+
+            "console-success"
         );
-
-
-        return false;
     }
 }
 
@@ -1704,337 +1761,637 @@ function clearConsole() {
 }
 
 
-function startConsole() {
+/* =========================================
+   ERREUR
+========================================= */
 
-    consoleElement.innerHTML =
-        "";
+function showError(
+    message
+) {
+
+    errorPanel.textContent =
+        message;
+
+    errorPanel.style.display =
+        "block";
+}
 
 
-    consoleWrite(
-        "▶ Exécution de " +
-        currentFile +
-        "...\n",
+function hideError() {
 
-        "console-info"
-    );
+    errorPanel.style.display =
+        "none";
 }
 
 
 /* =========================================
-   PYTHON
+   LIGNES
 ========================================= */
 
-async function initializePython() {
+function updateLineNumbers() {
 
-    try {
-
-        loadingText.textContent =
-            "Téléchargement du moteur Python...";
-
-
-        progressBar.style.width =
-            "20%";
+    const count =
+        code.value
+            .split("\n")
+            .length;
 
 
-        pyodide =
-            await loadPyodide({
-
-                indexURL:
-                    "https://cdn.jsdelivr.net/pyodide/v314.0.7/full/"
-
-            });
+    let html =
+        "";
 
 
-        progressBar.style.width =
-            "80%";
+    for (
+        let i = 1;
+        i <= count;
+        i++
+    ) {
+
+        html +=
+            i +
+            "<br>";
+    }
 
 
-        loadingText.textContent =
-            "Configuration de Python...";
+    lineNumbers.innerHTML =
+        html;
+}
 
 
-        pyodide.setStdout({
+/* =========================================
+   ESCAPE HTML
+========================================= */
 
-            batched: function(text) {
+function escapeHtml(
+    text
+) {
 
-                if (text) {
+    return text
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        );
+}
 
-                    consoleWrite(
-                        text
-                    );
-                }
+
+/* =========================================
+   COLORATION PYTHON
+========================================= */
+
+function updateHighlight() {
+
+    let text =
+        code.value;
+
+
+    if (!text) {
+
+        highlight.innerHTML =
+            "";
+
+        return;
+    }
+
+
+    let escaped =
+        escapeHtml(
+            text
+        );
+
+
+    const tokens =
+        [];
+
+
+    escaped =
+        escaped.replace(
+            /(#.*|"[^"\n]*"|'[^'\n]*')/g,
+
+            function(match) {
+
+                const id =
+                    tokens.length;
+
+
+                tokens.push(
+                    match
+                );
+
+
+                return (
+                    "___TOKEN_" +
+                    id +
+                    "___"
+                );
             }
-
-        });
-
-
-        pyodide.setStderr({
-
-            batched: function(text) {
-
-                if (text) {
-
-                    consoleWrite(
-                        text,
-                        "console-error"
-                    );
-                }
-            }
-
-        });
+        );
 
 
-        pyodide.setStdin({
+    escaped =
+        escaped.replace(
+            /\b(and|as|assert|async|await|break|case|class|continue|def|del|elif|else|except|finally|for|from|global|if|import|in|is|lambda|match|nonlocal|not|or|pass|raise|return|try|while|with|yield)\b/g,
 
-            stdin: function() {
+            '<span class="syntax-keyword">$1</span>'
+        );
 
-                const answer =
-                    window.prompt(
-                        "Python input() :"
-                    );
+
+    escaped =
+        escaped.replace(
+            /\b(print|input|len|range|str|int|float|bool|list|dict|set|tuple|open|sum|min|max|abs|round|enumerate|zip|map|filter|sorted|type|isinstance|super|property)\b/g,
+
+            '<span class="syntax-builtin">$1</span>'
+        );
+
+
+    escaped =
+        escaped.replace(
+            /\b(True|False|None)\b/g,
+
+            '<span class="syntax-boolean">$1</span>'
+        );
+
+
+    escaped =
+        escaped.replace(
+            /\b\d+(?:\.\d+)?\b/g,
+
+            '<span class="syntax-number">$&</span>'
+        );
+
+
+    escaped =
+        escaped.replace(
+            /___TOKEN_(\d+)___/g,
+
+            function(_, id) {
+
+                const token =
+                    tokens[
+                        Number(id)
+                    ];
 
 
                 if (
-                    answer === null
+                    token.startsWith("#")
                 ) {
 
-                    return undefined;
+                    return (
+                        '<span class="syntax-comment">' +
+                        token +
+                        "</span>"
+                    );
                 }
 
 
                 return (
-                    answer +
-                    "\n"
+                    '<span class="syntax-string">' +
+                    token +
+                    "</span>"
                 );
             }
-
-        });
-
-
-        pyodide.runPython(
-            "import sys"
         );
 
 
-        pythonReady =
-            true;
-
-
-        progressBar.style.width =
-            "100%";
-
-
-        loadingText.textContent =
-            "Python est prêt !";
-
-
-        setTimeout(
-            function() {
-
-                loadingOverlay.style.display =
-                    "none";
-
-            },
-            500
-        );
-
-
-        statusElement.textContent =
-            "🟢 Python prêt";
-
-
-        consoleWrite(
-            "✓ Python chargé avec succès.\n",
-            "console-success"
-        );
-
-
-        checkSyntax();
-
-    } catch (error) {
-
-        loadingText.textContent =
-            "❌ Erreur de chargement";
-
-
-        statusElement.textContent =
-            "🔴 Python indisponible";
-
-
-        consoleWrite(
-            "\n❌ ERREUR PYTHON :\n" +
-            String(error) +
-            "\n",
-
-            "console-error"
-        );
-    }
+    highlight.innerHTML =
+        escaped +
+        "\n";
 }
 
 
 /* =========================================
-   EXECUTION
+   SCROLL
 ========================================= */
 
-async function runCode() {
+function syncScroll() {
 
-    if (
-        !pythonReady ||
-        !pyodide
-    ) {
-
-        consoleWrite(
-            "⏳ Python n'est pas encore prêt.\n",
-            "console-error"
-        );
-
-        return;
-    }
+    highlight.scrollTop =
+        code.scrollTop;
 
 
-    if (running) {
-        return;
-    }
+    highlight.scrollLeft =
+        code.scrollLeft;
 
 
-    const source =
-        code.value;
+    lineNumbers.scrollTop =
+        code.scrollTop;
+}
 
 
-    if (!source.trim()) {
+/* =========================================
+   INPUT CODE
+========================================= */
 
-        consoleWrite(
-            "⚠️ Le fichier est vide.\n",
-            "console-error"
-        );
+function onCodeInput() {
 
-        return;
-    }
+    updateLineNumbers();
 
-
-    const valid =
-        await checkSyntax();
-
-
-    if (!valid) {
-
-        consoleWrite(
-            "❌ Corrige l'erreur avant d'exécuter le programme.\n",
-            "console-error"
-        );
-
-        return;
-    }
-
-
-    running =
-        true;
-
-
-    stopRequested =
-        false;
-
-
-    runButton.disabled =
-        true;
-
-
-    stopButton.disabled =
-        false;
-
-
-    statusElement.textContent =
-        "🟡 Exécution...";
-
-
-    /*
-       Sauvegarde avant exécution
-    */
+    updateHighlight();
 
     saveLocal();
 
-
-    startConsole();
-
-
-    try {
-
-        await pyodide.runPythonAsync(
-            source
-        );
-
-
-        if (!stopRequested) {
-
-            consoleWrite(
-                "\n✓ Programme terminé.\n",
-                "console-success"
-            );
-        }
-
-    } catch (error) {
-
-        if (stopRequested) {
-
-            consoleWrite(
-                "\n⏹ Programme arrêté.\n",
-                "console-error"
-            );
-
-        } else {
-
-            consoleWrite(
-                "\n❌ " +
-                String(error) +
-                "\n",
-                "console-error"
-            );
-        }
-
-    } finally {
-
-        running =
-            false;
-
-
-        runButton.disabled =
-            false;
-
-
-        stopButton.disabled =
-            true;
-
-
-        statusElement.textContent =
-            "🟢 Python prêt";
-    }
+    hideError();
 }
 
 
 /* =========================================
-   ARRET
+   AUTOCOMPLETE
 ========================================= */
 
-function stopCode() {
+function getCurrentWord() {
 
-    if (!running) {
+    const cursor =
+        code.selectionStart;
+
+
+    const before =
+        code.value.substring(
+            0,
+            cursor
+        );
+
+
+    const match =
+        before.match(
+            /[A-Za-z_][A-Za-z0-9_]*$/
+        );
+
+
+    return match
+        ? match[0]
+        : "";
+}
+
+
+function showAutocomplete() {
+
+    const word =
+        getCurrentWord();
+
+
+    if (!word) {
+
+        hideAutocomplete();
+
         return;
     }
 
 
-    stopRequested =
-        true;
+    const results =
+        suggestions
+            .filter(
+                item =>
+                    item
+                        .toLowerCase()
+                        .startsWith(
+                            word.toLowerCase()
+                        )
+            )
+            .slice(
+                0,
+                10
+            );
 
 
-    consoleWrite(
-        "\n⏹ Arrêt demandé...\n",
-        "console-error"
+    if (!results.length) {
+
+        hideAutocomplete();
+
+        return;
+    }
+
+
+    autocomplete.innerHTML =
+        "";
+
+
+    results.forEach(
+        function(
+            item,
+            index
+        ) {
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+
+            div.className =
+                "suggestion";
+
+
+            if (index === 0) {
+
+                div.classList.add(
+                    "selected"
+                );
+            }
+
+
+            div.innerHTML =
+                escapeHtml(
+                    item
+                ) +
+                '<span class="suggestion-type">Python</span>';
+
+
+            div.addEventListener(
+                "mousedown",
+                function(event) {
+
+                    event.preventDefault();
+
+                    insertSuggestion(
+                        item
+                    );
+                }
+            );
+
+
+            autocomplete.appendChild(
+                div
+            );
+        }
     );
+
+
+    positionAutocomplete();
+
+
+    autocomplete.style.display =
+        "block";
+}
+
+
+function hideAutocomplete() {
+
+    autocomplete.style.display =
+        "none";
+}
+
+
+function positionAutocomplete() {
+
+    const cursor =
+        code.selectionStart;
+
+
+    const before =
+        code.value.substring(
+            0,
+            cursor
+        );
+
+
+    const lines =
+        before.split("\n");
+
+
+    const line =
+        lines.length - 1;
+
+
+    const column =
+        lines[
+            lines.length - 1
+        ].length;
+
+
+    autocomplete.style.left =
+        (
+            18 +
+            column * 8.4
+        ) +
+        "px";
+
+
+    autocomplete.style.top =
+        (
+            15 +
+            (line + 1) * 22
+        ) +
+        "px";
+}
+
+
+function insertSuggestion(
+    word
+) {
+
+    const cursor =
+        code.selectionStart;
+
+
+    const before =
+        code.value.substring(
+            0,
+            cursor
+        );
+
+
+    const match =
+        before.match(
+            /[A-Za-z_][A-Za-z0-9_]*$/
+        );
+
+
+    if (!match) {
+        return;
+    }
+
+
+    const start =
+        cursor -
+        match[0].length;
+
+
+    code.value =
+        code.value.substring(
+            0,
+            start
+        ) +
+        word +
+        code.value.substring(
+            cursor
+        );
+
+
+    code.selectionStart =
+        code.selectionEnd =
+            start +
+            word.length;
+
+
+    hideAutocomplete();
+
+    onCodeInput();
+
+    code.focus();
 }
 
 
 /* =========================================
-   LISTE DES FICHIERS
+   CLAVIER
+========================================= */
+
+code.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (
+            event.key ===
+            "Tab"
+        ) {
+
+            event.preventDefault();
+
+
+            const start =
+                code.selectionStart;
+
+
+            const end =
+                code.selectionEnd;
+
+
+            code.value =
+                code.value.substring(
+                    0,
+                    start
+                ) +
+                "    " +
+                code.value.substring(
+                    end
+                );
+
+
+            code.selectionStart =
+                code.selectionEnd =
+                    start + 4;
+
+
+            onCodeInput();
+
+
+            return;
+        }
+
+
+        if (
+            event.key ===
+            "Enter"
+        ) {
+
+            hideAutocomplete();
+
+
+            const start =
+                code.selectionStart;
+
+
+            const before =
+                code.value.substring(
+                    0,
+                    start
+                );
+
+
+            const currentLine =
+                before
+                    .split("\n")
+                    .pop();
+
+
+            const match =
+                currentLine.match(
+                    /^\s*/
+                );
+
+
+            const indentation =
+                match
+                    ? match[0]
+                    : "";
+
+
+            const extraIndent =
+                currentLine
+                    .trim()
+                    .endsWith(":")
+                    ? "    "
+                    : "";
+
+
+            event.preventDefault();
+
+
+            const insertion =
+                "\n" +
+                indentation +
+                extraIndent;
+
+
+            code.value =
+                code.value.substring(
+                    0,
+                    start
+                ) +
+                insertion +
+                code.value.substring(
+                    code.selectionEnd
+                );
+
+
+            const position =
+                start +
+                insertion.length;
+
+
+            code.selectionStart =
+                code.selectionEnd =
+                    position;
+
+
+            onCodeInput();
+        }
+
+
+        if (
+            event.key ===
+            "Escape"
+        ) {
+
+            hideAutocomplete();
+        }
+    }
+);
+
+
+code.addEventListener(
+    "keyup",
+    function(event) {
+
+        if (
+            event.key.length === 1 ||
+            event.key === "Backspace" ||
+            event.key === "Delete"
+        ) {
+
+            showAutocomplete();
+        }
+    }
+);
+
+
+/* =========================================
+   SAUVEGARDE
 ========================================= */
 
 function getFiles() {
@@ -2074,7 +2431,7 @@ function getFiles() {
             "main.py"
         ];
 
-    } catch (error) {
+    } catch {
 
         return [
             "main.py"
@@ -2082,10 +2439,6 @@ function getFiles() {
     }
 }
 
-
-/* =========================================
-   SAUVEGARDE LISTE
-========================================= */
 
 function saveFilesList(
     files
@@ -2100,34 +2453,25 @@ function saveFilesList(
 }
 
 
-/* =========================================
-   SAUVEGARDE FICHIER
-========================================= */
-
 function saveLocal() {
 
     try {
 
         localStorage.setItem(
-            "python_ide_v6_" +
+            "python_ide_v7_" +
             currentFile,
 
             code.value
         );
 
-    } catch (error) {
+    } catch(error) {
 
         console.error(
-            "Erreur de sauvegarde :",
             error
         );
     }
 }
 
-
-/* =========================================
-   CHARGER FICHIER
-========================================= */
 
 function loadLocal(
     filename
@@ -2136,11 +2480,11 @@ function loadLocal(
     try {
 
         return localStorage.getItem(
-            "python_ide_v6_" +
+            "python_ide_v7_" +
             filename
         );
 
-    } catch (error) {
+    } catch {
 
         return null;
     }
@@ -2148,7 +2492,7 @@ function loadLocal(
 
 
 /* =========================================
-   SAUVEGARDER
+   BOUTON SAUVEGARDER
 ========================================= */
 
 function saveFile() {
@@ -2188,100 +2532,6 @@ function saveFile() {
 
 
 /* =========================================
-   SUPPRIMER
-========================================= */
-
-function deleteCurrentFile() {
-
-    if (
-        currentFile ===
-        "main.py"
-    ) {
-
-        alert(
-            "⚠️ main.py ne peut pas être supprimé."
-        );
-
-        return;
-    }
-
-
-    const confirmation =
-        confirm(
-            "🗑️ Voulez-vous vraiment supprimer « " +
-            currentFile +
-            " » ?"
-        );
-
-
-    if (!confirmation) {
-        return;
-    }
-
-
-    /*
-       Supprime le contenu
-    */
-
-    localStorage.removeItem(
-        "python_ide_v6_" +
-        currentFile
-    );
-
-
-    /*
-       Supprime de la liste
-    */
-
-    let files =
-        getFiles();
-
-
-    files =
-        files.filter(
-            file =>
-                file !==
-                currentFile
-        );
-
-
-    saveFilesList(
-        files
-    );
-
-
-    /*
-       Retourne sur main.py
-    */
-
-    currentFile =
-        "main.py";
-
-
-    loadFilesList();
-
-
-    const mainFile =
-        document.querySelector(
-            '.file[data-file="main.py"]'
-        );
-
-
-    selectFile(
-        "main.py",
-        mainFile
-    );
-
-
-    consoleWrite(
-        "🗑️ Fichier supprimé.\n",
-
-        "console-success"
-    );
-}
-
-
-/* =========================================
    NOUVEAU FICHIER
 ========================================= */
 
@@ -2302,10 +2552,6 @@ function newFile() {
     filename =
         filename.trim();
 
-
-    /*
-       Sécurité du nom
-    */
 
     filename =
         filename.replace(
@@ -2343,10 +2589,6 @@ function newFile() {
     }
 
 
-    /*
-       Ajoute le fichier
-    */
-
     files.push(
         filename
     );
@@ -2357,12 +2599,8 @@ function newFile() {
     );
 
 
-    /*
-       Contenu initial
-    */
-
     localStorage.setItem(
-        "python_ide_v6_" +
+        "python_ide_v7_" +
         filename,
 
 `# ${filename}
@@ -2372,16 +2610,8 @@ print("Hello Python !")
     );
 
 
-    /*
-       Recharge la liste
-    */
-
     loadFilesList();
 
-
-    /*
-       Ouvre le fichier
-    */
 
     const element =
         document.querySelector(
@@ -2408,7 +2638,89 @@ print("Hello Python !")
 
 
 /* =========================================
-   CHARGER LA LISTE
+   SUPPRIMER
+========================================= */
+
+function deleteCurrentFile() {
+
+    if (
+        currentFile ===
+        "main.py"
+    ) {
+
+        alert(
+            "⚠️ main.py ne peut pas être supprimé."
+        );
+
+        return;
+    }
+
+
+    const confirmation =
+        confirm(
+            "🗑️ Supprimer définitivement « " +
+            currentFile +
+            " » ?"
+        );
+
+
+    if (!confirmation) {
+        return;
+    }
+
+
+    localStorage.removeItem(
+        "python_ide_v7_" +
+        currentFile
+    );
+
+
+    let files =
+        getFiles();
+
+
+    files =
+        files.filter(
+            file =>
+                file !==
+                currentFile
+        );
+
+
+    saveFilesList(
+        files
+    );
+
+
+    currentFile =
+        "main.py";
+
+
+    loadFilesList();
+
+
+    const mainFile =
+        document.querySelector(
+            '.file[data-file="main.py"]'
+        );
+
+
+    selectFile(
+        "main.py",
+        mainFile
+    );
+
+
+    consoleWrite(
+        "🗑️ Fichier supprimé.\n",
+
+        "console-success"
+    );
+}
+
+
+/* =========================================
+   CHARGER LISTE
 ========================================= */
 
 function loadFilesList() {
@@ -2426,10 +2738,6 @@ function loadFilesList() {
     let files =
         getFiles();
 
-
-    /*
-       main.py existe toujours
-    */
 
     if (
         !files.includes(
@@ -2500,7 +2808,7 @@ function loadFilesList() {
 
 
 /* =========================================
-   CHANGER DE FICHIER
+   CHANGER FICHIER
 ========================================= */
 
 function selectFile(
@@ -2508,20 +2816,12 @@ function selectFile(
     element
 ) {
 
-    /*
-       Sauvegarde l'ancien fichier
-    */
-
     saveLocal();
 
 
     currentFile =
         filename;
 
-
-    /*
-       Active le fichier
-    */
 
     document
         .querySelectorAll(
@@ -2544,10 +2844,6 @@ function selectFile(
         );
     }
 
-
-    /*
-       Charge
-    */
 
     const saved =
         loadLocal(
@@ -2611,11 +2907,6 @@ window.addEventListener(
 );
 
 
-/*
-   Sauvegarde également
-   quand la page devient inactive.
-*/
-
 document.addEventListener(
     "visibilitychange",
     function() {
@@ -2665,7 +2956,7 @@ document.addEventListener(
 
 
 /* =========================================
-   INITIALISATION
+   CODE INITIAL
 ========================================= */
 
 const savedMain =
@@ -2692,14 +2983,14 @@ print("Bonjour", nom)
 `;
 
     localStorage.setItem(
-        "python_ide_v6_main.py",
+        "python_ide_v7_main.py",
         code.value
     );
 }
 
 
 /* =========================================
-   INITIALISATION EDITEUR
+   INITIALISATION
 ========================================= */
 
 updateLineNumbers();
@@ -2708,12 +2999,7 @@ updateHighlight();
 
 loadFilesList();
 
-
-/* =========================================
-   DEMARRAGE PYTHON
-========================================= */
-
-initializePython();
+initializeWorker();
 
 </script>
 
