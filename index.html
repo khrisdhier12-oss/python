@@ -1,18 +1,14 @@
-```html
 <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Python Runner</title>
+<title>🐍 Python IDE V5</title>
+
+<script src="https://cdn.jsdelivr.net/pyodide/v314.0.7/full/pyodide.js"></script>
 
 <style>
-
-/* =========================================================
-   BASE
-========================================================= */
-
 * {
     box-sizing: border-box;
 }
@@ -23,41 +19,49 @@ body {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    font-family: Consolas, "Courier New", monospace;
     background: #0d1117;
-    color: #c9d1d9;
+    color: #e6edf3;
+    font-family: Consolas, "Courier New", monospace;
 }
 
-/* =========================================================
-   TOPBAR
-========================================================= */
+body {
+    display: flex;
+    flex-direction: column;
+}
 
-#topbar {
-    height: 48px;
-    background: #161b22;
-    border-bottom: 1px solid #30363d;
+/* ================================
+   BARRE DU HAUT
+================================ */
+
+.topbar {
+    height: 52px;
+    min-height: 52px;
 
     display: flex;
     align-items: center;
 
-    padding: 0 10px;
-    gap: 6px;
+    gap: 8px;
+    padding: 0 12px;
+
+    background: #161b22;
+    border-bottom: 1px solid #30363d;
 }
 
-#title {
+.logo {
+    font-size: 18px;
     font-weight: bold;
-    color: #58a6ff;
-    margin-right: 15px;
+    margin-right: 12px;
+    white-space: nowrap;
 }
 
 button {
-    background: #21262d;
-    color: #c9d1d9;
-
     border: 1px solid #30363d;
-    border-radius: 6px;
+    background: #21262d;
+    color: #e6edf3;
 
-    padding: 6px 11px;
+    padding: 7px 12px;
+
+    border-radius: 6px;
 
     cursor: pointer;
 
@@ -68,35 +72,60 @@ button:hover {
     background: #30363d;
 }
 
-button.run {
+button:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+.run-btn {
     background: #238636;
     border-color: #2ea043;
-    color: white;
 }
 
-button.stop {
+.run-btn:hover {
+    background: #2ea043;
+}
+
+.stop-btn {
     background: #da3633;
     border-color: #f85149;
-    color: white;
 }
 
-/* =========================================================
-   LAYOUT
-========================================================= */
+.stop-btn:hover {
+    background: #f85149;
+}
 
-#main {
-    height: calc(100vh - 48px);
+.status {
+    margin-left: auto;
+
+    color: #8b949e;
+
+    font-size: 13px;
+
+    white-space: nowrap;
+}
+
+/* ================================
+   STRUCTURE
+================================ */
+
+.main {
+    flex: 1;
+    min-height: 0;
+
     display: flex;
 }
 
-/* =========================================================
+/* ================================
    SIDEBAR
-========================================================= */
+================================ */
 
-#sidebar {
+.sidebar {
     width: 220px;
+    min-width: 220px;
 
     background: #0d1117;
+
     border-right: 1px solid #30363d;
 
     display: flex;
@@ -104,27 +133,25 @@ button.stop {
 }
 
 .sidebar-title {
-    padding: 12px;
-    font-size: 12px;
+    padding: 14px;
+
     font-weight: bold;
 
-    color: #8b949e;
-    text-transform: uppercase;
+    border-bottom: 1px solid #21262d;
 }
 
-#files {
-    flex: 1;
-    overflow-y: auto;
+.file-list {
+    padding: 8px;
 }
 
 .file {
-    padding: 7px 12px;
+    padding: 9px 10px;
+
+    border-radius: 6px;
 
     cursor: pointer;
 
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    color: #c9d1d9;
 }
 
 .file:hover {
@@ -132,232 +159,161 @@ button.stop {
 }
 
 .file.active {
-    background: #21262d;
+    background: #1f6feb33;
     color: #58a6ff;
 }
 
-/* =========================================================
-   EDITOR AREA
-========================================================= */
+/* ================================
+   WORKSPACE
+================================ */
 
-#workspace {
+.workspace {
     flex: 1;
+    min-width: 0;
+    min-height: 0;
 
     display: flex;
     flex-direction: column;
-
-    min-width: 0;
 }
 
-/* =========================================================
-   EDITOR
-========================================================= */
+/* ================================
+   EDITEUR
+================================ */
 
-#editor {
+.editor-container {
+    flex: 1;
+    min-height: 0;
+
     position: relative;
 
-    flex: 1;
-
     display: flex;
-
-    overflow: hidden;
 
     background: #0d1117;
 }
 
-/* =========================================================
-   LINE NUMBERS
-========================================================= */
-
-#lineNumbers {
+.line-numbers {
     width: 55px;
+    min-width: 55px;
 
-    padding-top: 12px;
+    padding-top: 15px;
+    padding-right: 12px;
 
     text-align: right;
 
-    padding-right: 12px;
-
     color: #484f58;
 
-    user-select: none;
+    font-size: 14px;
+    line-height: 22px;
 
     overflow: hidden;
 
-    line-height: 21px;
-
-    font-size: 14px;
-
-    border-right: 1px solid #21262d;
+    user-select: none;
 }
 
-/* =========================================================
-   CODE CONTAINER
-========================================================= */
-
-#codeContainer {
-    position: relative;
-
+.editor {
     flex: 1;
-
     min-width: 0;
 
+    position: relative;
+
     overflow: hidden;
 }
 
-/* =========================================================
-   HIGHLIGHT
-========================================================= */
-
+#code,
 #highlight {
     position: absolute;
 
     inset: 0;
 
-    padding: 12px;
-
     margin: 0;
 
-    white-space: pre;
+    padding: 15px 18px;
 
-    overflow: hidden;
-
-    pointer-events: none;
-
-    line-height: 21px;
-
-    font-size: 14px;
+    border: 0;
+    outline: 0;
 
     font-family: Consolas, "Courier New", monospace;
 
-    color: #c9d1d9;
+    font-size: 14px;
+    line-height: 22px;
+
+    white-space: pre;
+
+    tab-size: 4;
+
+    overflow: auto;
 }
 
-/* =========================================================
-   TEXTAREA
-========================================================= */
+#highlight {
+    z-index: 1;
+
+    color: #e6edf3;
+
+    pointer-events: none;
+}
 
 #code {
-    position: absolute;
-
-    inset: 0;
-
-    width: 100%;
-    height: 100%;
+    z-index: 2;
 
     resize: none;
-
-    border: none;
-    outline: none;
-
-    padding: 12px;
 
     background: transparent;
 
     color: transparent;
 
     caret-color: white;
-
-    font-family: Consolas, "Courier New", monospace;
-
-    font-size: 14px;
-
-    line-height: 21px;
-
-    white-space: pre;
-
-    overflow: auto;
-
-    z-index: 5;
 }
 
 #code::selection {
-    background: rgba(56, 139, 253, 0.35);
+    background: #264f78;
 }
 
-/* =========================================================
-   SYNTAX COLORS
-========================================================= */
+/* ================================
+   COLORATION PYTHON
+================================ */
 
-.py-keyword {
+.syntax-keyword {
     color: #ff7b72;
 }
 
-.py-string {
+.syntax-string {
     color: #a5d6ff;
 }
 
-.py-comment {
-    color: #8b949e;
-    font-style: italic;
-}
-
-.py-number {
+.syntax-number {
     color: #79c0ff;
 }
 
-.py-constant {
+.syntax-comment {
+    color: #8b949e;
+}
+
+.syntax-builtin {
     color: #ffa657;
 }
 
-.py-function {
+.syntax-boolean {
+    color: #79c0ff;
+}
+
+.syntax-function {
     color: #d2a8ff;
 }
 
-/* =========================================================
-   ERREURS
-========================================================= */
+/* ================================
+   AUTOCOMPLETION
+================================ */
 
-.error-line {
-    background: rgba(248, 81, 73, 0.12);
-    border-left: 3px solid #f85149;
-}
-
-.typo-error,
-.syntax-error {
-    text-decoration-line: underline;
-    text-decoration-style: wavy;
-    text-decoration-color: #f85149;
-    text-decoration-thickness: 2px;
-}
-
-#error-panel {
+.autocomplete {
     position: absolute;
 
-    left: 70px;
-    right: 15px;
-    bottom: 10px;
-
-    padding: 10px;
-
-    background: #2d1114;
-
-    border: 1px solid #f85149;
-
-    border-radius: 6px;
-
-    color: #ff7b72;
+    z-index: 30;
 
     display: none;
 
-    z-index: 20;
-
-    font-size: 13px;
-}
-
-/* =========================================================
-   AUTOCOMPLÉTION
-========================================================= */
-
-#autocomplete {
-    position: absolute;
-
-    display: none;
-
-    min-width: 230px;
-    max-width: 330px;
-
-    max-height: 230px;
+    min-width: 200px;
+    max-width: 320px;
+    max-height: 240px;
 
     overflow-y: auto;
 
@@ -367,199 +323,322 @@ button.stop {
 
     border-radius: 6px;
 
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.45);
+    box-shadow: 0 8px 25px rgba(0,0,0,.5);
+}
 
-    z-index: 50;
+.suggestion {
+    padding: 8px 10px;
+
+    cursor: pointer;
 
     font-size: 13px;
 }
 
-.autocomplete-item {
-    display: flex;
-
-    align-items: center;
-
-    gap: 9px;
-
-    padding: 7px 10px;
-
-    cursor: pointer;
-}
-
-.autocomplete-item:hover,
-.autocomplete-item.selected {
+.suggestion:hover,
+.suggestion.selected {
     background: #1f6feb;
+
     color: white;
 }
 
-.autocomplete-icon {
-    width: 20px;
-
-    text-align: center;
-
-    color: #79c0ff;
-}
-
-.autocomplete-name {
-    font-weight: bold;
-}
-
-.autocomplete-info {
-    margin-left: auto;
+.suggestion-type {
+    float: right;
 
     color: #8b949e;
 
     font-size: 11px;
 }
 
-.autocomplete-item.selected .autocomplete-info {
-    color: #dbeafe;
+/* ================================
+   ERREUR
+================================ */
+
+.error-panel {
+    position: absolute;
+
+    z-index: 20;
+
+    left: 20px;
+    right: 20px;
+    bottom: 10px;
+
+    display: none;
+
+    padding: 9px 12px;
+
+    background: #3d1618;
+
+    border: 1px solid #f85149;
+
+    border-radius: 6px;
+
+    color: #ff7b72;
+
+    font-size: 13px;
 }
 
-/* =========================================================
+/* ================================
    CONSOLE
-========================================================= */
+================================ */
 
-#console {
-    height: 180px;
+.bottom {
+    height: 230px;
+    min-height: 120px;
+
+    display: flex;
+    flex-direction: column;
 
     background: #010409;
 
     border-top: 1px solid #30363d;
-
-    display: none;
-
-    flex-direction: column;
 }
 
-#consoleHeader {
-    height: 32px;
+.bottom-header {
+    height: 38px;
+    min-height: 38px;
 
-    padding: 7px 10px;
+    display: flex;
+    align-items: center;
 
-    color: #8b949e;
+    padding: 0 12px;
 
-    font-size: 12px;
+    background: #161b22;
 
-    border-bottom: 1px solid #21262d;
-}
-
-#output {
-    flex: 1;
-
-    padding: 10px;
-
-    overflow-y: auto;
-
-    white-space: pre-wrap;
+    border-bottom: 1px solid #30363d;
 
     font-size: 13px;
 }
 
-/* =========================================================
-   STATUS
-========================================================= */
+.console {
+    flex: 1;
 
-#statusbar {
-    height: 25px;
+    overflow: auto;
 
-    background: #161b22;
+    padding: 12px;
 
-    border-top: 1px solid #30363d;
+    white-space: pre-wrap;
 
-    display: flex;
+    font-size: 13px;
 
-    align-items: center;
-
-    padding: 0 10px;
-
-    font-size: 11px;
-
-    color: #8b949e;
+    line-height: 20px;
 }
 
-.status-ok {
+.console-info {
+    color: #58a6ff;
+}
+
+.console-success {
     color: #3fb950;
 }
 
-.status-error {
-    color: #f85149;
+.console-error {
+    color: #ff7b72;
 }
 
-/* =========================================================
-   FULLSCREEN
-========================================================= */
+/* ================================
+   CHARGEMENT PYTHON
+================================ */
 
-.fullscreen #sidebar {
+.loading-overlay {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 1000;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 15px;
+
+    background: #0d1117;
+}
+
+.loading-title {
+    font-size: 23px;
+
+    font-weight: bold;
+}
+
+.loading-text {
+    color: #8b949e;
+}
+
+.progress {
+    width: 320px;
+
+    height: 8px;
+
+    overflow: hidden;
+
+    background: #21262d;
+
+    border-radius: 20px;
+}
+
+.progress-bar {
+    width: 0%;
+
+    height: 100%;
+
+    background: #238636;
+
+    transition: width .3s;
+}
+
+/* ================================
+   PLEIN ECRAN
+================================ */
+
+.fullscreen .sidebar {
     display: none;
 }
 
-.fullscreen #topbar {
-    display: none;
+.fullscreen .bottom {
+    height: 180px;
 }
 
+/* ================================
+   RESPONSIVE
+================================ */
+
+@media (max-width: 800px) {
+
+    .sidebar {
+        width: 160px;
+        min-width: 160px;
+    }
+
+    .logo {
+        display: none;
+    }
+
+    .topbar button {
+        padding: 6px 8px;
+    }
+
+    .status {
+        display: none;
+    }
+}
 </style>
 </head>
 
 <body>
 
-<!-- =======================================================
-     TOPBAR
-======================================================== -->
+<!-- ================================
+     CHARGEMENT
+================================ -->
 
-<div id="topbar">
+<div
+    class="loading-overlay"
+    id="loadingOverlay"
+>
 
-    <div id="title">
-        🐍 Python Runner
+    <div class="loading-title">
+        🐍 Chargement de Python...
+    </div>
+
+    <div
+        class="loading-text"
+        id="loadingText"
+    >
+        Initialisation de Pyodide...
+    </div>
+
+    <div class="progress">
+
+        <div
+            class="progress-bar"
+            id="progressBar"
+        ></div>
+
+    </div>
+
+</div>
+
+
+<!-- ================================
+     BARRE DU HAUT
+================================ -->
+
+<div class="topbar">
+
+    <div class="logo">
+        🐍 Python IDE V5
     </div>
 
     <button onclick="newFile()">
-        Nouveau
+        📄 Nouveau
     </button>
 
     <button onclick="saveFile()">
-        Sauver
+        💾 Sauvegarder
     </button>
 
-    <button class="run" onclick="runCode()">
+    <button
+        class="run-btn"
+        id="runButton"
+        onclick="runCode()"
+    >
         ▶ Exécuter
     </button>
 
-    <button class="stop" onclick="stopCode()">
-        ■ Stop
+    <button
+        class="stop-btn"
+        id="stopButton"
+        onclick="stopCode()"
+        disabled
+    >
+        ⏹ Arrêter
     </button>
 
-    <button onclick="toggleConsole()">
-        Console
+    <button onclick="clearConsole()">
+        🧹 Console
     </button>
 
     <button onclick="toggleFullscreen()">
         ⛶ Plein écran
     </button>
 
+    <div
+        class="status"
+        id="status"
+    >
+        Chargement...
+    </div>
+
 </div>
 
 
-<!-- =======================================================
-     MAIN
-======================================================== -->
+<!-- ================================
+     PRINCIPAL
+================================ -->
 
-<div id="main">
-
+<div class="main">
 
     <!-- SIDEBAR -->
 
-    <div id="sidebar">
+    <div class="sidebar">
 
         <div class="sidebar-title">
-            EXPLORATEUR
+            📁 Fichiers
         </div>
 
-        <div id="files">
+        <div
+            class="file-list"
+            id="fileList"
+        >
 
             <div
                 class="file active"
-                onclick="selectFile('main.py')"
+                data-file="main.py"
+                onclick="selectFile('main.py', this)"
             >
                 🐍 main.py
             </div>
@@ -571,24 +650,20 @@ button.stop {
 
     <!-- WORKSPACE -->
 
-    <div id="workspace">
+    <div class="workspace">
 
+        <!-- EDITEUR -->
 
-        <!-- EDITOR -->
+        <div class="editor-container">
 
-        <div id="editor">
-
-
-            <!-- LINE NUMBERS -->
-
-            <div id="lineNumbers">
+            <div
+                class="line-numbers"
+                id="lineNumbers"
+            >
                 1
             </div>
 
-
-            <!-- CODE -->
-
-            <div id="codeContainer">
+            <div class="editor">
 
                 <pre id="highlight"></pre>
 
@@ -598,17 +673,21 @@ button.stop {
                     autocomplete="off"
                     autocorrect="off"
                     autocapitalize="off"
+                    oninput="onCodeInput()"
+                    onscroll="syncScroll()"
+                    onkeydown="handleEditorKeydown(event)"
+                    onkeyup="handleEditorKeyup(event)"
                 ></textarea>
 
+                <div
+                    class="autocomplete"
+                    id="autocomplete"
+                ></div>
 
-                <!-- AUTOCOMPLÉTION -->
-
-                <div id="autocomplete"></div>
-
-
-                <!-- ERROR -->
-
-                <div id="error-panel"></div>
+                <div
+                    class="error-panel"
+                    id="errorPanel"
+                ></div>
 
             </div>
 
@@ -617,24 +696,20 @@ button.stop {
 
         <!-- CONSOLE -->
 
-        <div id="console">
+        <div class="bottom">
 
-            <div id="consoleHeader">
-                TERMINAL
+            <div class="bottom-header">
+                🖥 Console
             </div>
 
-            <pre id="output"></pre>
-
-        </div>
-
-
-        <!-- STATUS -->
-
-        <div id="statusbar">
-
-            <span id="status">
-                Prêt
-            </span>
+            <div
+                class="console"
+                id="console"
+            >
+                <span class="console-info">
+                    Chargement de Python...
+                </span>
+            </div>
 
         </div>
 
@@ -645,9 +720,20 @@ button.stop {
 
 <script>
 
-/* =========================================================
-   ELEMENTS
-========================================================= */
+/* =========================================
+   VARIABLES
+========================================= */
+
+let pyodide = null;
+
+let pythonReady = false;
+
+let running = false;
+
+let stopRequested = false;
+
+let currentFile = "main.py";
+
 
 const code =
     document.getElementById("code");
@@ -658,561 +744,456 @@ const highlight =
 const lineNumbers =
     document.getElementById("lineNumbers");
 
-const output =
-    document.getElementById("output");
-
-const consolePanel =
+const consoleElement =
     document.getElementById("console");
 
-const status =
-    document.getElementById("status");
-
 const errorPanel =
-    document.getElementById("error-panel");
+    document.getElementById("errorPanel");
 
 const autocomplete =
     document.getElementById("autocomplete");
 
+const statusElement =
+    document.getElementById("status");
 
-/* =========================================================
-   VARIABLES
-========================================================= */
+const runButton =
+    document.getElementById("runButton");
 
-let currentFile =
-    "main.py";
+const stopButton =
+    document.getElementById("stopButton");
 
-let autosaveTimer =
-    null;
+const loadingOverlay =
+    document.getElementById("loadingOverlay");
 
-let checkTimer =
-    null;
+const loadingText =
+    document.getElementById("loadingText");
 
-let autocompleteIndex =
-    0;
-
-let autocompleteItems =
-    [];
+const progressBar =
+    document.getElementById("progressBar");
 
 
-/* =========================================================
-   MOTS PYTHON
-========================================================= */
+/* =========================================
+   AUTOCOMPLETION
+========================================= */
 
-const keywords = [
+const suggestions = [
 
-    "and",
+    "print",
+    "input",
+    "len",
+    "range",
+    "str",
+    "int",
+    "float",
+    "bool",
+    "list",
+    "dict",
+    "set",
+    "tuple",
+    "open",
+    "sum",
+    "min",
+    "max",
+    "abs",
+    "round",
+    "enumerate",
+    "zip",
+    "map",
+    "filter",
+    "sorted",
+    "type",
+    "isinstance",
+    "super",
+
+    "import",
+    "from",
     "as",
-    "assert",
-    "async",
-    "await",
-    "break",
-    "case",
-    "class",
-    "continue",
     "def",
-    "del",
+    "class",
+    "if",
     "elif",
     "else",
-    "except",
-    "finally",
     "for",
-    "from",
-    "global",
-    "if",
-    "import",
+    "while",
     "in",
     "is",
-    "lambda",
-    "match",
-    "nonlocal",
     "not",
+    "and",
     "or",
-    "pass",
-    "raise",
     "return",
     "try",
-    "while",
+    "except",
+    "finally",
     "with",
-    "yield"
-
-];
-
-
-const constants = [
+    "pass",
+    "break",
+    "continue",
+    "raise",
+    "yield",
+    "lambda",
+    "async",
+    "await",
 
     "True",
     "False",
     "None"
-
 ];
 
 
-/* =========================================================
-   AUTOCOMPLÉTION
-========================================================= */
+/* =========================================
+   MOT COURANT
+========================================= */
 
-const pythonSuggestions = [
+function getCurrentWord() {
 
-    /* Fonctions */
+    const cursor =
+        code.selectionStart;
 
-    {
-        name: "print",
-        icon: "ƒ",
-        info: "fonction"
-    },
+    const before =
+        code.value.substring(
+            0,
+            cursor
+        );
 
-    {
-        name: "input",
-        icon: "ƒ",
-        info: "fonction"
-    },
+    const match =
+        before.match(
+            /[A-Za-z_][A-Za-z0-9_]*$/
+        );
 
-    {
-        name: "len",
-        icon: "ƒ",
-        info: "fonction"
-    },
-
-    {
-        name: "range",
-        icon: "ƒ",
-        info: "fonction"
-    },
-
-    {
-        name: "str",
-        icon: "ƒ",
-        info: "fonction"
-    },
-
-    {
-        name: "int",
-        icon: "ƒ",
-        info: "fonction"
-    },
-
-    {
-        name: "float",
-        icon: "ƒ",
-        info: "fonction"
-    },
-
-    {
-        name: "list",
-        icon: "ƒ",
-        info: "fonction"
-    },
-
-    {
-        name: "dict",
-        icon: "ƒ",
-        info: "fonction"
-    },
-
-    {
-        name: "set",
-        icon: "ƒ",
-        info: "fonction"
-    },
-
-    {
-        name: "tuple",
-        icon: "ƒ",
-        info: "fonction"
-    },
-
-    {
-        name: "open",
-        icon: "ƒ",
-        info: "fonction"
-    },
-
-    {
-        name: "sum",
-        icon: "ƒ",
-        info: "fonction"
-    },
-
-    {
-        name: "min",
-        icon: "ƒ",
-        info: "fonction"
-    },
-
-    {
-        name: "max",
-        icon: "ƒ",
-        info: "fonction"
-    },
-
-    {
-        name: "abs",
-        icon: "ƒ",
-        info: "fonction"
-    },
-
-    {
-        name: "round",
-        icon: "ƒ",
-        info: "fonction"
-    },
-
-    {
-        name: "enumerate",
-        icon: "ƒ",
-        info: "fonction"
-    },
-
-    {
-        name: "zip",
-        icon: "ƒ",
-        info: "fonction"
-    },
-
-    {
-        name: "sorted",
-        icon: "ƒ",
-        info: "fonction"
-    },
-
-    {
-        name: "type",
-        icon: "ƒ",
-        info: "fonction"
-    },
-
-    {
-        name: "isinstance",
-        icon: "ƒ",
-        info: "fonction"
-    },
+    return match
+        ? match[0]
+        : "";
+}
 
 
-    /* Mots-clés */
+/* =========================================
+   AUTOCOMPLETION
+========================================= */
 
-    {
-        name: "import",
-        icon: "K",
-        info: "mot-clé"
-    },
+function showAutocomplete() {
 
-    {
-        name: "from",
-        icon: "K",
-        info: "mot-clé"
-    },
+    const word =
+        getCurrentWord();
 
-    {
-        name: "def",
-        icon: "K",
-        info: "mot-clé"
-    },
+    if (!word) {
 
-    {
-        name: "class",
-        icon: "K",
-        info: "mot-clé"
-    },
+        hideAutocomplete();
 
-    {
-        name: "if",
-        icon: "K",
-        info: "mot-clé"
-    },
-
-    {
-        name: "elif",
-        icon: "K",
-        info: "mot-clé"
-    },
-
-    {
-        name: "else",
-        icon: "K",
-        info: "mot-clé"
-    },
-
-    {
-        name: "for",
-        icon: "K",
-        info: "mot-clé"
-    },
-
-    {
-        name: "while",
-        icon: "K",
-        info: "mot-clé"
-    },
-
-    {
-        name: "return",
-        icon: "K",
-        info: "mot-clé"
-    },
-
-    {
-        name: "try",
-        icon: "K",
-        info: "mot-clé"
-    },
-
-    {
-        name: "except",
-        icon: "K",
-        info: "mot-clé"
-    },
-
-    {
-        name: "finally",
-        icon: "K",
-        info: "mot-clé"
-    },
-
-    {
-        name: "with",
-        icon: "K",
-        info: "mot-clé"
-    },
-
-    {
-        name: "as",
-        icon: "K",
-        info: "mot-clé"
-    },
-
-    {
-        name: "pass",
-        icon: "K",
-        info: "mot-clé"
-    },
-
-    {
-        name: "break",
-        icon: "K",
-        info: "mot-clé"
-    },
-
-    {
-        name: "continue",
-        icon: "K",
-        info: "mot-clé"
-    },
-
-    {
-        name: "raise",
-        icon: "K",
-        info: "mot-clé"
-    },
-
-    {
-        name: "yield",
-        icon: "K",
-        info: "mot-clé"
-    },
-
-
-    /* Constantes */
-
-    {
-        name: "True",
-        icon: "C",
-        info: "constante"
-    },
-
-    {
-        name: "False",
-        icon: "C",
-        info: "constante"
-    },
-
-    {
-        name: "None",
-        icon: "C",
-        info: "constante"
+        return;
     }
 
-];
+    const results =
+        suggestions
+            .filter(item =>
+                item
+                    .toLowerCase()
+                    .startsWith(
+                        word.toLowerCase()
+                    )
+            )
+            .slice(0, 10);
 
+    if (!results.length) {
 
-/* =========================================================
-   ÉCHAPPER HTML
-========================================================= */
+        hideAutocomplete();
 
-function escapeHTML(text) {
+        return;
+    }
 
-    return text
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;");
+    autocomplete.innerHTML = "";
 
-}
+    results.forEach(
+        (item, index) => {
 
-
-/* =========================================================
-   COLORATION PYTHON
-========================================================= */
-
-function highlightPython(source) {
-
-    let escaped =
-        escapeHTML(source);
-
-
-    const strings = [];
-
-    escaped =
-        escaped.replace(
-            /("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')/g,
-            match => {
-
-                const id =
-                    strings.length;
-
-                strings.push(match);
-
-                return `___STRING_${id}___`;
-
-            }
-        );
-
-
-    const comments = [];
-
-    escaped =
-        escaped.replace(
-            /(#.*)$/gm,
-            match => {
-
-                const id =
-                    comments.length;
-
-                comments.push(match);
-
-                return `___COMMENT_${id}___`;
-
-            }
-        );
-
-
-    escaped =
-        escaped.replace(
-            /\b\d+(?:\.\d+)?\b/g,
-            '<span class="py-number">$&</span>'
-        );
-
-
-    escaped =
-        escaped.replace(
-            new RegExp(
-                "\\b(" +
-                keywords.join("|") +
-                ")\\b",
-                "g"
-            ),
-            '<span class="py-keyword">$1</span>'
-        );
-
-
-    escaped =
-        escaped.replace(
-            new RegExp(
-                "\\b(" +
-                constants.join("|") +
-                ")\\b",
-                "g"
-            ),
-            '<span class="py-constant">$1</span>'
-        );
-
-
-    escaped =
-        escaped.replace(
-            /\b([A-Za-z_][A-Za-z0-9_]*)(?=\s*\()/g,
-            '<span class="py-function">$1</span>'
-        );
-
-
-    strings.forEach(
-        (value, index) => {
-
-            escaped =
-                escaped.replace(
-                    `___STRING_${index}___`,
-                    `<span class="py-string">${value}</span>`
+            const div =
+                document.createElement(
+                    "div"
                 );
 
+            div.className =
+                "suggestion";
+
+            if (index === 0) {
+                div.classList.add(
+                    "selected"
+                );
+            }
+
+            div.innerHTML =
+                escapeHtml(item) +
+                '<span class="suggestion-type">Python</span>';
+
+            div.addEventListener(
+                "mousedown",
+                function(event) {
+
+                    event.preventDefault();
+
+                    insertSuggestion(item);
+                }
+            );
+
+            autocomplete.appendChild(div);
         }
     );
 
+    positionAutocomplete();
 
-    comments.forEach(
-        (value, index) => {
-
-            escaped =
-                escaped.replace(
-                    `___COMMENT_${index}___`,
-                    `<span class="py-comment">${value}</span>`
-                );
-
-        }
-    );
-
-
-    return escaped;
-
+    autocomplete.style.display =
+        "block";
 }
 
 
-/* =========================================================
-   MISE À JOUR ÉDITEUR
-========================================================= */
+function hideAutocomplete() {
 
-function updateEditor() {
-
-    highlight.innerHTML =
-        highlightPython(
-            code.value
-        ) + "\n";
-
-    updateLines();
-
-    syncScroll();
-
+    autocomplete.style.display =
+        "none";
 }
 
 
-/* =========================================================
-   NUMÉROS DE LIGNES
-========================================================= */
+function positionAutocomplete() {
 
-function updateLines() {
+    const cursor =
+        code.selectionStart;
 
-    const count =
-        code.value.split("\n").length;
+    const before =
+        code.value.substring(
+            0,
+            cursor
+        );
+
+    const lines =
+        before.split("\n");
+
+    const line =
+        lines.length - 1;
+
+    const column =
+        lines[
+            lines.length - 1
+        ].length;
+
+    const lineHeight = 22;
+
+    const charWidth = 8.4;
+
+    autocomplete.style.left =
+        (
+            18 +
+            column * charWidth
+        ) + "px";
+
+    autocomplete.style.top =
+        (
+            15 +
+            (line + 1) * lineHeight
+        ) + "px";
+}
 
 
-    let html = "";
+function insertSuggestion(word) {
 
-    for (
-        let i = 1;
-        i <= count;
-        i++
+    const cursor =
+        code.selectionStart;
+
+    const before =
+        code.value.substring(
+            0,
+            cursor
+        );
+
+    const match =
+        before.match(
+            /[A-Za-z_][A-Za-z0-9_]*$/
+        );
+
+    if (!match) {
+        return;
+    }
+
+    const start =
+        cursor -
+        match[0].length;
+
+    code.value =
+        code.value.substring(
+            0,
+            start
+        ) +
+        word +
+        code.value.substring(
+            cursor
+        );
+
+    code.selectionStart =
+        code.selectionEnd =
+            start + word.length;
+
+    hideAutocomplete();
+
+    onCodeInput();
+
+    code.focus();
+}
+
+
+/* =========================================
+   CLAVIER EDITEUR
+========================================= */
+
+function handleEditorKeydown(event) {
+
+    /* TAB */
+
+    if (event.key === "Tab") {
+
+        event.preventDefault();
+
+        const start =
+            code.selectionStart;
+
+        const end =
+            code.selectionEnd;
+
+        code.value =
+            code.value.substring(
+                0,
+                start
+            ) +
+            "    " +
+            code.value.substring(
+                end
+            );
+
+        code.selectionStart =
+            code.selectionEnd =
+                start + 4;
+
+        onCodeInput();
+
+        return;
+    }
+
+
+    /* ENTREE */
+
+    if (event.key === "Enter") {
+
+        hideAutocomplete();
+
+        const start =
+            code.selectionStart;
+
+        const before =
+            code.value.substring(
+                0,
+                start
+            );
+
+        const currentLine =
+            before
+                .split("\n")
+                .pop();
+
+        const match =
+            currentLine.match(
+                /^\s*/
+            );
+
+        const indentation =
+            match
+                ? match[0]
+                : "";
+
+        const extraIndent =
+            currentLine
+                .trim()
+                .endsWith(":")
+                ? "    "
+                : "";
+
+        event.preventDefault();
+
+        const insertion =
+            "\n" +
+            indentation +
+            extraIndent;
+
+        code.value =
+            code.value.substring(
+                0,
+                start
+            ) +
+            insertion +
+            code.value.substring(
+                code.selectionEnd
+            );
+
+        const position =
+            start +
+            insertion.length;
+
+        code.selectionStart =
+            code.selectionEnd =
+                position;
+
+        onCodeInput();
+
+        return;
+    }
+
+
+    if (event.key === "Escape") {
+
+        hideAutocomplete();
+    }
+}
+
+
+function handleEditorKeyup(event) {
+
+    if (
+        event.key.length === 1 ||
+        event.key === "Backspace" ||
+        event.key === "Delete"
     ) {
 
-        html += i + "<br>";
-
+        showAutocomplete();
     }
-
-
-    lineNumbers.innerHTML =
-        html;
-
 }
 
 
-/* =========================================================
-   SCROLL SYNCHRONISÉ
-========================================================= */
+/* =========================================
+   MODIFICATION CODE
+========================================= */
+
+function onCodeInput() {
+
+    updateLineNumbers();
+
+    updateHighlight();
+
+    saveLocal();
+
+    hideError();
+
+    clearTimeout(
+        window.checkTimer
+    );
+
+    window.checkTimer =
+        setTimeout(
+            function() {
+                checkSyntax();
+            },
+            400
+        );
+}
+
+
+/* =========================================
+   SCROLL
+========================================= */
 
 function syncScroll() {
 
@@ -1224,967 +1205,1008 @@ function syncScroll() {
 
     lineNumbers.scrollTop =
         code.scrollTop;
-
 }
 
 
-/* =========================================================
-   AUTOCOMPLÉTION : MOT ACTUEL
-========================================================= */
-
-function getCurrentWord() {
-
-    const position =
-        code.selectionStart;
-
-
-    const before =
-        code.value.substring(
-            0,
-            position
-        );
-
-
-    const match =
-        before.match(
-            /[A-Za-z_][A-Za-z0-9_]*$/
-        );
-
-
-    if (!match)
-        return "";
-
-
-    return match[0];
-
-}
-
-
-/* =========================================================
-   AUTOCOMPLÉTION : AFFICHER
-========================================================= */
-
-function showAutocomplete() {
-
-    const word =
-        getCurrentWord();
-
-
-    if (!word) {
-
-        hideAutocomplete();
-
-        return;
-
-    }
-
-
-    const search =
-        word.toLowerCase();
-
-
-    const results =
-        pythonSuggestions.filter(
-            item =>
-                item.name
-                    .toLowerCase()
-                    .startsWith(search)
-        );
-
-
-    if (!results.length) {
-
-        hideAutocomplete();
-
-        return;
-
-    }
-
-
-    autocompleteItems =
-        results.slice(0, 8);
-
-
-    autocompleteIndex =
-        0;
-
-
-    autocomplete.innerHTML =
-        "";
-
-
-    autocompleteItems.forEach(
-        (item, index) => {
-
-            const div =
-                document.createElement(
-                    "div"
-                );
-
-
-            div.className =
-                "autocomplete-item";
-
-
-            if (index === 0) {
-
-                div.classList.add(
-                    "selected"
-                );
-
-            }
-
-
-            div.innerHTML = `
-
-                <span class="autocomplete-icon">
-                    ${item.icon}
-                </span>
-
-                <span class="autocomplete-name">
-                    ${item.name}
-                </span>
-
-                <span class="autocomplete-info">
-                    ${item.info}
-                </span>
-
-            `;
-
-
-            div.addEventListener(
-                "mousedown",
-                event => {
-
-                    event.preventDefault();
-
-                    insertAutocomplete(
-                        item.name
-                    );
-
-                }
-            );
-
-
-            autocomplete.appendChild(
-                div
-            );
-
-        }
-    );
-
-
-    positionAutocomplete();
-
-
-    autocomplete.style.display =
-        "block";
-
-}
-
-
-/* =========================================================
-   AUTOCOMPLÉTION : POSITION
-========================================================= */
-
-function positionAutocomplete() {
-
-    const lineHeight =
-        21;
-
-
-    const position =
-        code.selectionStart;
-
-
-    const text =
-        code.value.substring(
-            0,
-            position
-        );
-
-
-    const line =
-        text.split("\n").length;
-
-
-    const column =
-        text.length -
-        text.lastIndexOf("\n") -
-        1;
-
-
-    const top =
-        (line - 1) *
-        lineHeight +
-        35;
-
-
-    const left =
-        Math.min(
-            column * 8.4 + 18,
-            code.clientWidth - 250
-        );
-
-
-    autocomplete.style.top =
-        top + "px";
-
-
-    autocomplete.style.left =
-        Math.max(
-            5,
-            left
-        ) + "px";
-
-}
-
-
-/* =========================================================
-   AUTOCOMPLÉTION : INSÉRER
-========================================================= */
-
-function insertAutocomplete(word) {
-
-    const position =
-        code.selectionStart;
-
-
-    const before =
-        code.value.substring(
-            0,
-            position
-        );
-
-
-    const after =
-        code.value.substring(
-            position
-        );
-
-
-    const match =
-        before.match(
-            /[A-Za-z_][A-Za-z0-9_]*$/
-        );
-
-
-    if (!match)
-        return;
-
-
-    const start =
-        position -
-        match[0].length;
-
-
-    code.value =
-        code.value.substring(
-            0,
-            start
-        ) +
-
-        word +
-
-        after;
-
-
-    const newPosition =
-        start +
-        word.length;
-
-
-    code.selectionStart =
-        newPosition;
-
-    code.selectionEnd =
-        newPosition;
-
-
-    hideAutocomplete();
-
-    updateEditor();
-
-    checkCode();
-
-    code.focus();
-
-}
-
-
-/* =========================================================
-   AUTOCOMPLÉTION : CACHER
-========================================================= */
-
-function hideAutocomplete() {
-
-    autocomplete.style.display =
-        "none";
-
-}
-
-
-/* =========================================================
-   AUTOCOMPLÉTION : SÉLECTION
-========================================================= */
-
-function updateAutocompleteSelection() {
-
-    const items =
-        autocomplete.querySelectorAll(
-            ".autocomplete-item"
-        );
-
-
-    items.forEach(
-        (item, index) => {
-
-            item.classList.toggle(
-                "selected",
-                index ===
-                autocompleteIndex
-            );
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   CLAVIER
-========================================================= */
-
-code.addEventListener(
-    "keydown",
-    event => {
-
-
-        /* AUTOCOMPLÉTION */
-
-        if (
-            autocomplete.style.display ===
-            "block"
-        ) {
-
-
-            if (
-                event.key ===
-                "ArrowDown"
-            ) {
-
-                event.preventDefault();
-
-
-                autocompleteIndex =
-                    Math.min(
-                        autocompleteIndex + 1,
-                        autocompleteItems.length - 1
-                    );
-
-
-                updateAutocompleteSelection();
-
-                return;
-
-            }
-
-
-            if (
-                event.key ===
-                "ArrowUp"
-            ) {
-
-                event.preventDefault();
-
-
-                autocompleteIndex =
-                    Math.max(
-                        autocompleteIndex - 1,
-                        0
-                    );
-
-
-                updateAutocompleteSelection();
-
-                return;
-
-            }
-
-
-            if (
-                event.key === "Enter" ||
-                event.key === "Tab"
-            ) {
-
-                event.preventDefault();
-
-
-                const item =
-                    autocompleteItems[
-                        autocompleteIndex
-                    ];
-
-
-                if (item) {
-
-                    insertAutocomplete(
-                        item.name
-                    );
-
-                }
-
-
-                return;
-
-            }
-
-
-            if (
-                event.key ===
-                "Escape"
-            ) {
-
-                hideAutocomplete();
-
-                return;
-
-            }
-
-        }
-
-
-        /* TAB NORMAL */
-
-        if (
-            event.key === "Tab"
-        ) {
-
-            event.preventDefault();
-
-
-            const start =
-                code.selectionStart;
-
-            const end =
-                code.selectionEnd;
-
-
-            code.value =
-                code.value.substring(
-                    0,
-                    start
-                ) +
-
-                "    " +
-
-                code.value.substring(
-                    end
-                );
-
-
-            code.selectionStart =
-                start + 4;
-
-            code.selectionEnd =
-                start + 4;
-
-
-            updateEditor();
-
-            return;
-
-        }
-
-
-        /* CTRL + S */
-
-        if (
-            event.ctrlKey &&
-            event.key.toLowerCase() === "s"
-        ) {
-
-            event.preventDefault();
-
-            saveFile();
-
-        }
-
-
-        /* F5 */
-
-        if (
-            event.key === "F5"
-        ) {
-
-            event.preventDefault();
-
-            runCode();
-
-        }
-
-
-        /* ESCAPE */
-
-        if (
-            event.key === "Escape"
-        ) {
-
-            stopCode();
-
-        }
-
-    }
-);
-
-
-/* =========================================================
-   INPUT
-========================================================= */
-
-code.addEventListener(
-    "input",
-    () => {
-
-        updateEditor();
-
-
-        clearTimeout(
-            checkTimer
-        );
-
-
-        checkTimer =
-            setTimeout(
-                checkCode,
-                400
-            );
-
-
-        clearTimeout(
-            autosaveTimer
-        );
-
-
-        autosaveTimer =
-            setTimeout(
-                saveFile,
-                1500
-            );
-
-
-        setTimeout(
-            showAutocomplete,
-            10
-        );
-
-    }
-);
-
-
-/* =========================================================
-   CLICK
-========================================================= */
-
-code.addEventListener(
-    "click",
-    () => {
-
-        hideAutocomplete();
-
-    }
-);
-
-
-/* =========================================================
-   SCROLL
-========================================================= */
-
-code.addEventListener(
-    "scroll",
-    () => {
-
-        syncScroll();
-
-        hideAutocomplete();
-
-    }
-);
-
-
-/* =========================================================
-   VÉRIFICATION PYTHON
-========================================================= */
-
-async function checkCode() {
-
-    try {
-
-        const response =
-            await fetch(
-                "/api/check",
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body: JSON.stringify({
-                        content: code.value
-                    })
-                }
-            );
-
-
-        const data =
-            await response.json();
-
-
-        showError(data);
-
-    }
-
-    catch (error) {
-
-        console.error(error);
-
-    }
-
-}
-
-
-/* =========================================================
-   AFFICHER ERREUR
-========================================================= */
-
-function showError(data) {
-
-    if (
-        data.ok
+/* =========================================
+   NUMEROS DE LIGNES
+========================================= */
+
+function updateLineNumbers() {
+
+    const count =
+        code.value
+            .split("\n")
+            .length;
+
+    let html = "";
+
+    for (
+        let i = 1;
+        i <= count;
+        i++
     ) {
 
-        errorPanel.style.display =
-            "none";
-
-        status.textContent =
-            "✓ Code valide";
-
-        status.className =
-            "status-ok";
-
-        return;
-
+        html +=
+            i +
+            "<br>";
     }
 
+    lineNumbers.innerHTML =
+        html;
+}
+
+
+/* =========================================
+   ECHAPPEMENT HTML
+========================================= */
+
+function escapeHtml(text) {
+
+    return text
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        );
+}
+
+
+/* =========================================
+   COLORATION SYNTAXIQUE
+========================================= */
+
+function updateHighlight() {
+
+    let text =
+        code.value;
+
+    if (!text) {
+
+        highlight.innerHTML =
+            "";
+
+        return;
+    }
+
+    let escaped =
+        escapeHtml(text);
+
+    const tokens = [];
+
+
+    /*
+       On protège les chaînes et commentaires
+    */
+
+    escaped =
+        escaped.replace(
+            /(#.*|"[^"\n]*"|'[^'\n]*')/g,
+
+            function(match) {
+
+                const id =
+                    tokens.length;
+
+                tokens.push(match);
+
+                return (
+                    "___TOKEN_" +
+                    id +
+                    "___"
+                );
+            }
+        );
+
+
+    /*
+       Mots Python
+    */
+
+    escaped =
+        escaped.replace(
+            /\b(and|as|assert|async|await|break|case|class|continue|def|del|elif|else|except|finally|for|from|global|if|import|in|is|lambda|match|nonlocal|not|or|pass|raise|return|try|while|with|yield)\b/g,
+
+            '<span class="syntax-keyword">$1</span>'
+        );
+
+
+    /*
+       Fonctions intégrées
+    */
+
+    escaped =
+        escaped.replace(
+            /\b(print|input|len|range|str|int|float|bool|list|dict|set|tuple|open|sum|min|max|abs|round|enumerate|zip|map|filter|sorted|type|isinstance|super)\b/g,
+
+            '<span class="syntax-builtin">$1</span>'
+        );
+
+
+    /*
+       True False None
+    */
+
+    escaped =
+        escaped.replace(
+            /\b(True|False|None)\b/g,
+
+            '<span class="syntax-boolean">$1</span>'
+        );
+
+
+    /*
+       Nombres
+    */
+
+    escaped =
+        escaped.replace(
+            /\b\d+(?:\.\d+)?\b/g,
+
+            '<span class="syntax-number">$&</span>'
+        );
+
+
+    /*
+       Restaurer chaînes/commentaires
+    */
+
+    escaped =
+        escaped.replace(
+            /___TOKEN_(\d+)___/g,
+
+            function(_, id) {
+
+                const token =
+                    tokens[
+                        Number(id)
+                    ];
+
+                if (
+                    token.startsWith("#")
+                ) {
+
+                    return (
+                        '<span class="syntax-comment">' +
+                        token +
+                        "</span>"
+                    );
+                }
+
+                return (
+                    '<span class="syntax-string">' +
+                    token +
+                    "</span>"
+                );
+            }
+        );
+
+
+    highlight.innerHTML =
+        escaped +
+        "\n";
+}
+
+
+/* =========================================
+   ERREUR
+========================================= */
+
+function showError(message) {
+
+    errorPanel.textContent =
+        message;
 
     errorPanel.style.display =
         "block";
-
-
-    errorPanel.innerHTML = `
-
-        <strong>
-            ${data.type || "Erreur"}
-        </strong>
-
-        — ligne ${data.line || "?"}
-
-        <br>
-
-        ${data.message || "Erreur"}
-
-    `;
-
-
-    status.textContent =
-        "✕ Erreur";
-
-    status.className =
-        "status-error";
-
 }
 
 
-/* =========================================================
-   NOUVEAU
-========================================================= */
+function hideError() {
 
-function newFile() {
+    errorPanel.style.display =
+        "none";
+}
+
+
+/* =========================================
+   VERIFICATION SYNTAXE
+========================================= */
+
+async function checkSyntax() {
 
     if (
-        code.value.trim() &&
-        !confirm(
-            "Créer un nouveau fichier ?"
-        )
+        !pythonReady ||
+        !pyodide
     ) {
 
-        return;
-
+        return true;
     }
 
+    const source =
+        code.value;
 
-    code.value = "";
+    if (!source.trim()) {
 
-    currentFile =
-        "main.py";
+        hideError();
 
-
-    updateEditor();
-
-    hideAutocomplete();
-
-    status.textContent =
-        "Nouveau fichier";
-
-}
-
-
-/* =========================================================
-   SAUVEGARDE
-========================================================= */
-
-async function saveFile() {
+        return true;
+    }
 
     try {
 
-        await fetch(
-            "/api/save",
-            {
-                method: "POST",
+        /*
+           IMPORTANT :
 
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                },
+           On utilise compile() directement.
 
-                body: JSON.stringify({
+           Aucun JSON.
+           Aucun toJs().
+        */
 
-                    filename:
-                        currentFile,
-
-                    content:
-                        code.value
-
-                })
-
-            }
+        await pyodide.runPythonAsync(
+            "compile(" +
+            JSON.stringify(source) +
+            ", '<editor>', 'exec')"
         );
 
+        hideError();
 
-        status.textContent =
-            "✓ Sauvegardé";
+        return true;
 
+    } catch (error) {
 
-        status.className =
-            "status-ok";
+        const message =
+            String(error);
 
+        let line = "?";
+
+        const match =
+            message.match(
+                /line\s+(\d+)/i
+            );
+
+        if (match) {
+
+            line =
+                match[1];
+        }
+
+        showError(
+            "❌ Ligne " +
+            line +
+            " : " +
+            message
+        );
+
+        return false;
     }
-
-    catch (error) {
-
-        status.textContent =
-            "Erreur sauvegarde";
-
-        status.className =
-            "status-error";
-
-    }
-
 }
 
 
-/* =========================================================
-   EXÉCUTER
-========================================================= */
+/* =========================================
+   CONSOLE
+========================================= */
+
+function consoleWrite(
+    text,
+    className = ""
+) {
+
+    const span =
+        document.createElement(
+            "span"
+        );
+
+    if (className) {
+
+        span.className =
+            className;
+    }
+
+    span.textContent =
+        text;
+
+    consoleElement.appendChild(
+        span
+    );
+
+    consoleElement.scrollTop =
+        consoleElement.scrollHeight;
+}
+
+
+function clearConsole() {
+
+    consoleElement.innerHTML =
+        "";
+}
+
+
+function startConsole() {
+
+    consoleElement.innerHTML =
+        "";
+
+    consoleWrite(
+        "▶ Exécution de " +
+        currentFile +
+        "...\n",
+
+        "console-info"
+    );
+}
+
+
+/* =========================================
+   CHARGEMENT PYTHON
+========================================= */
+
+async function initializePython() {
+
+    try {
+
+        loadingText.textContent =
+            "Téléchargement du moteur Python...";
+
+        progressBar.style.width =
+            "20%";
+
+
+        pyodide =
+            await loadPyodide({
+                indexURL:
+                    "https://cdn.jsdelivr.net/pyodide/v314.0.7/full/"
+            });
+
+
+        progressBar.style.width =
+            "80%";
+
+
+        loadingText.textContent =
+            "Configuration de Python...";
+
+
+        /*
+           PRINT
+        */
+
+        pyodide.setStdout({
+
+            batched: function(text) {
+
+                if (text) {
+
+                    consoleWrite(
+                        text
+                    );
+                }
+            }
+
+        });
+
+
+        /*
+           STDERR
+        */
+
+        pyodide.setStderr({
+
+            batched: function(text) {
+
+                if (text) {
+
+                    consoleWrite(
+                        text,
+                        "console-error"
+                    );
+                }
+            }
+
+        });
+
+
+        /*
+           INPUT
+        */
+
+        pyodide.setStdin({
+
+            stdin: function() {
+
+                const answer =
+                    window.prompt(
+                        "Python input() :"
+                    );
+
+                if (
+                    answer === null
+                ) {
+
+                    return undefined;
+                }
+
+                return (
+                    answer +
+                    "\n"
+                );
+            }
+
+        });
+
+
+        /*
+           Test
+        */
+
+        pyodide.runPython(
+            "import sys"
+        );
+
+
+        pythonReady = true;
+
+
+        progressBar.style.width =
+            "100%";
+
+
+        loadingText.textContent =
+            "Python est prêt !";
+
+
+        setTimeout(
+            function() {
+
+                loadingOverlay.style.display =
+                    "none";
+
+            },
+            500
+        );
+
+
+        statusElement.textContent =
+            "🟢 Python prêt";
+
+
+        consoleWrite(
+            "✓ Python chargé avec succès.\n",
+            "console-success"
+        );
+
+
+        checkSyntax();
+
+    } catch (error) {
+
+        loadingText.textContent =
+            "❌ Erreur de chargement";
+
+        statusElement.textContent =
+            "🔴 Python indisponible";
+
+        consoleWrite(
+            "\n❌ ERREUR PYTHON :\n" +
+            String(error) +
+            "\n",
+
+            "console-error"
+        );
+    }
+}
+
+
+/* =========================================
+   EXECUTION
+========================================= */
 
 async function runCode() {
 
-    hideAutocomplete();
+    if (
+        !pythonReady ||
+        !pyodide
+    ) {
 
-    output.textContent =
-        "Exécution...\n";
+        consoleWrite(
+            "⏳ Python n'est pas encore prêt.\n",
+            "console-error"
+        );
+
+        return;
+    }
 
 
-    consolePanel.style.display =
-        "flex";
+    if (running) {
+        return;
+    }
+
+
+    const source =
+        code.value;
+
+
+    if (!source.trim()) {
+
+        consoleWrite(
+            "⚠ Le fichier est vide.\n",
+            "console-error"
+        );
+
+        return;
+    }
+
+
+    /*
+       Vérification avant exécution
+    */
+
+    const valid =
+        await checkSyntax();
+
+
+    if (!valid) {
+
+        consoleWrite(
+            "❌ Corrige l'erreur avant d'exécuter le programme.\n",
+            "console-error"
+        );
+
+        return;
+    }
+
+
+    running = true;
+
+    stopRequested = false;
+
+
+    runButton.disabled =
+        true;
+
+    stopButton.disabled =
+        false;
+
+
+    statusElement.textContent =
+        "🟡 Exécution...";
+
+
+    startConsole();
 
 
     try {
 
-        const response =
-            await fetch(
-                "/api/run",
-                {
-                    method: "POST",
+        /*
+           Exécution Python
+        */
 
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
+        await pyodide.runPythonAsync(
+            source
+        );
 
-                    body: JSON.stringify({
 
-                        filename:
-                            currentFile,
+        if (!stopRequested) {
 
-                        content:
-                            code.value
+            consoleWrite(
+                "\n✓ Programme terminé.\n",
+                "console-success"
+            );
+        }
 
-                    })
+    } catch (error) {
 
-                }
+        if (stopRequested) {
+
+            consoleWrite(
+                "\n⏹ Programme arrêté.\n",
+                "console-error"
             );
 
+        } else {
 
-        const data =
-            await response.json();
+            consoleWrite(
+                "\n❌ " +
+                String(error) +
+                "\n",
+                "console-error"
+            );
+        }
 
+    } finally {
 
-        output.textContent =
-            data.output ||
-            data.error ||
-            "";
+        running = false;
 
+        runButton.disabled =
+            false;
+
+        stopButton.disabled =
+            true;
+
+        statusElement.textContent =
+            "🟢 Python prêt";
     }
-
-    catch (error) {
-
-        output.textContent =
-            String(error);
-
-    }
-
 }
 
 
-/* =========================================================
-   STOP
-========================================================= */
+/* =========================================
+   ARRET
+========================================= */
 
-async function stopCode() {
+function stopCode() {
+
+    if (!running) {
+        return;
+    }
+
+    stopRequested =
+        true;
+
+    consoleWrite(
+        "\n⏹ Arrêt demandé...\n",
+        "console-error"
+    );
+}
+
+
+/* =========================================
+   SAUVEGARDE LOCALE
+========================================= */
+
+function saveLocal() {
 
     try {
 
-        await fetch(
-            "/api/stop",
-            {
-                method: "POST"
+        localStorage.setItem(
+            "python_ide_v5_" +
+            currentFile,
+
+            code.value
+        );
+
+    } catch (error) {
+
+        console.log(
+            "Sauvegarde impossible",
+            error
+        );
+    }
+}
+
+
+function loadLocal(filename) {
+
+    try {
+
+        return localStorage.getItem(
+            "python_ide_v5_" +
+            filename
+        );
+
+    } catch (error) {
+
+        return null;
+    }
+}
+
+
+function saveFile() {
+
+    saveLocal();
+
+    consoleWrite(
+        "✓ " +
+        currentFile +
+        " sauvegardé dans le navigateur.\n",
+
+        "console-success"
+    );
+}
+
+
+/* =========================================
+   NOUVEAU FICHIER
+========================================= */
+
+function newFile() {
+
+    let filename =
+        window.prompt(
+            "Nom du nouveau fichier :",
+            "nouveau.py"
+        );
+
+
+    if (!filename) {
+        return;
+    }
+
+
+    filename =
+        filename.trim();
+
+
+    if (
+        !filename
+            .toLowerCase()
+            .endsWith(".py")
+    ) {
+
+        filename +=
+            ".py";
+    }
+
+
+    const existingFiles =
+        document.querySelectorAll(
+            ".file"
+        );
+
+
+    for (
+        const file
+        of existingFiles
+    ) {
+
+        if (
+            file.dataset.file ===
+            filename
+        ) {
+
+            alert(
+                "Ce fichier existe déjà."
+            );
+
+            return;
+        }
+    }
+
+
+    const div =
+        document.createElement(
+            "div"
+        );
+
+    div.className =
+        "file";
+
+    div.dataset.file =
+        filename;
+
+    div.textContent =
+        "🐍 " +
+        filename;
+
+
+    div.onclick =
+        function() {
+
+            selectFile(
+                filename,
+                div
+            );
+        };
+
+
+    document
+        .getElementById(
+            "fileList"
+        )
+        .appendChild(
+            div
+        );
+
+
+    localStorage.setItem(
+        "python_ide_v5_" +
+        filename,
+
+        "# " +
+        filename +
+        "\n\n" +
+        'print("Hello Python !")\n'
+    );
+
+
+    selectFile(
+        filename,
+        div
+    );
+
+
+    consoleWrite(
+        "✓ " +
+        filename +
+        " créé.\n",
+
+        "console-success"
+    );
+}
+
+
+/* =========================================
+   CHANGER DE FICHIER
+========================================= */
+
+function selectFile(
+    filename,
+    element
+) {
+
+    /*
+       Sauvegarde du fichier actuel
+    */
+
+    saveLocal();
+
+
+    currentFile =
+        filename;
+
+
+    /*
+       Active le bon fichier
+    */
+
+    document
+        .querySelectorAll(
+            ".file"
+        )
+        .forEach(
+            function(file) {
+
+                file.classList.remove(
+                    "active"
+                );
             }
         );
 
-        output.textContent +=
-            "\n[Programme arrêté]";
 
+    if (element) {
+
+        element.classList.add(
+            "active"
+        );
     }
 
-    catch (error) {
 
-        console.error(error);
+    /*
+       Charge la sauvegarde
+    */
 
-    }
+    const saved =
+        loadLocal(
+            filename
+        );
 
-}
 
+    if (saved !== null) {
 
-/* =========================================================
-   CONSOLE
-========================================================= */
+        code.value =
+            saved;
 
-function toggleConsole() {
-
-    if (
-        consolePanel.style.display ===
-        "flex"
+    } else if (
+        filename ===
+        "main.py"
     ) {
 
-        consolePanel.style.display =
-            "none";
+        code.value =
+`print("Bonjour !")
 
+nom = input("Quel est ton nom ? ")
+print("Bonjour", nom)
+`;
+
+    } else {
+
+        code.value =
+`# ${filename}
+
+print("Hello Python !")
+`;
     }
 
-    else {
 
-        consolePanel.style.display =
-            "flex";
+    updateLineNumbers();
 
-    }
+    updateHighlight();
 
+    hideError();
+
+
+    consoleWrite(
+        "📄 " +
+        filename +
+        " ouvert.\n",
+
+        "console-info"
+    );
 }
 
 
-/* =========================================================
-   PLEIN ÉCRAN
-========================================================= */
+/* =========================================
+   PLEIN ECRAN
+========================================= */
 
 function toggleFullscreen() {
 
     document.body.classList.toggle(
         "fullscreen"
     );
-
-
-    if (
-        document.fullscreenElement
-    ) {
-
-        document.exitFullscreen();
-
-    }
-
-    else {
-
-        document.documentElement.requestFullscreen()
-            .catch(() => {});
-
-    }
-
 }
 
 
-/* =========================================================
-   FICHIER
-========================================================= */
+/* =========================================
+   CLIC EXTERIEUR
+========================================= */
 
-function selectFile(filename) {
+document.addEventListener(
+    "click",
+    function(event) {
 
-    currentFile =
-        filename;
+        if (
+            event.target !== code &&
+            !autocomplete.contains(
+                event.target
+            )
+        ) {
+
+            hideAutocomplete();
+        }
+    }
+);
 
 
-    document
-        .querySelectorAll(".file")
-        .forEach(
-            item =>
-                item.classList.remove(
-                    "active"
-                )
-        );
+/* =========================================
+   CODE INITIAL
+========================================= */
 
-
-    event?.currentTarget?.classList.add(
-        "active"
+const savedMain =
+    loadLocal(
+        "main.py"
     );
 
+
+if (savedMain !== null) {
+
+    code.value =
+        savedMain;
+
+} else {
+
+    code.value =
+`print("Bonjour !")
+
+nom = input("Quel est ton nom ? ")
+print("Bonjour", nom)
+`;
 }
 
 
-/* =========================================================
-   INITIALISATION
-========================================================= */
+/* =========================================
+   INITIALISATION EDITEUR
+========================================= */
 
-code.value =
-`print("Bonjour !")
+updateLineNumbers();
 
-`;
+updateHighlight();
 
-updateEditor();
 
-checkCode();
+/* =========================================
+   LANCEMENT PYTHON
+========================================= */
+
+initializePython();
 
 </script>
 
 </body>
 </html>
-```
