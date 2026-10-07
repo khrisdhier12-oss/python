@@ -1,0 +1,2190 @@
+```html
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Python Runner</title>
+
+<style>
+
+/* =========================================================
+   BASE
+========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: Consolas, "Courier New", monospace;
+    background: #0d1117;
+    color: #c9d1d9;
+}
+
+/* =========================================================
+   TOPBAR
+========================================================= */
+
+#topbar {
+    height: 48px;
+    background: #161b22;
+    border-bottom: 1px solid #30363d;
+
+    display: flex;
+    align-items: center;
+
+    padding: 0 10px;
+    gap: 6px;
+}
+
+#title {
+    font-weight: bold;
+    color: #58a6ff;
+    margin-right: 15px;
+}
+
+button {
+    background: #21262d;
+    color: #c9d1d9;
+
+    border: 1px solid #30363d;
+    border-radius: 6px;
+
+    padding: 6px 11px;
+
+    cursor: pointer;
+
+    font-family: inherit;
+}
+
+button:hover {
+    background: #30363d;
+}
+
+button.run {
+    background: #238636;
+    border-color: #2ea043;
+    color: white;
+}
+
+button.stop {
+    background: #da3633;
+    border-color: #f85149;
+    color: white;
+}
+
+/* =========================================================
+   LAYOUT
+========================================================= */
+
+#main {
+    height: calc(100vh - 48px);
+    display: flex;
+}
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+#sidebar {
+    width: 220px;
+
+    background: #0d1117;
+    border-right: 1px solid #30363d;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-title {
+    padding: 12px;
+    font-size: 12px;
+    font-weight: bold;
+
+    color: #8b949e;
+    text-transform: uppercase;
+}
+
+#files {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.file {
+    padding: 7px 12px;
+
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.file:hover {
+    background: #161b22;
+}
+
+.file.active {
+    background: #21262d;
+    color: #58a6ff;
+}
+
+/* =========================================================
+   EDITOR AREA
+========================================================= */
+
+#workspace {
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+
+    min-width: 0;
+}
+
+/* =========================================================
+   EDITOR
+========================================================= */
+
+#editor {
+    position: relative;
+
+    flex: 1;
+
+    display: flex;
+
+    overflow: hidden;
+
+    background: #0d1117;
+}
+
+/* =========================================================
+   LINE NUMBERS
+========================================================= */
+
+#lineNumbers {
+    width: 55px;
+
+    padding-top: 12px;
+
+    text-align: right;
+
+    padding-right: 12px;
+
+    color: #484f58;
+
+    user-select: none;
+
+    overflow: hidden;
+
+    line-height: 21px;
+
+    font-size: 14px;
+
+    border-right: 1px solid #21262d;
+}
+
+/* =========================================================
+   CODE CONTAINER
+========================================================= */
+
+#codeContainer {
+    position: relative;
+
+    flex: 1;
+
+    min-width: 0;
+
+    overflow: hidden;
+}
+
+/* =========================================================
+   HIGHLIGHT
+========================================================= */
+
+#highlight {
+    position: absolute;
+
+    inset: 0;
+
+    padding: 12px;
+
+    margin: 0;
+
+    white-space: pre;
+
+    overflow: hidden;
+
+    pointer-events: none;
+
+    line-height: 21px;
+
+    font-size: 14px;
+
+    font-family: Consolas, "Courier New", monospace;
+
+    color: #c9d1d9;
+}
+
+/* =========================================================
+   TEXTAREA
+========================================================= */
+
+#code {
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    resize: none;
+
+    border: none;
+    outline: none;
+
+    padding: 12px;
+
+    background: transparent;
+
+    color: transparent;
+
+    caret-color: white;
+
+    font-family: Consolas, "Courier New", monospace;
+
+    font-size: 14px;
+
+    line-height: 21px;
+
+    white-space: pre;
+
+    overflow: auto;
+
+    z-index: 5;
+}
+
+#code::selection {
+    background: rgba(56, 139, 253, 0.35);
+}
+
+/* =========================================================
+   SYNTAX COLORS
+========================================================= */
+
+.py-keyword {
+    color: #ff7b72;
+}
+
+.py-string {
+    color: #a5d6ff;
+}
+
+.py-comment {
+    color: #8b949e;
+    font-style: italic;
+}
+
+.py-number {
+    color: #79c0ff;
+}
+
+.py-constant {
+    color: #ffa657;
+}
+
+.py-function {
+    color: #d2a8ff;
+}
+
+/* =========================================================
+   ERREURS
+========================================================= */
+
+.error-line {
+    background: rgba(248, 81, 73, 0.12);
+    border-left: 3px solid #f85149;
+}
+
+.typo-error,
+.syntax-error {
+    text-decoration-line: underline;
+    text-decoration-style: wavy;
+    text-decoration-color: #f85149;
+    text-decoration-thickness: 2px;
+}
+
+#error-panel {
+    position: absolute;
+
+    left: 70px;
+    right: 15px;
+    bottom: 10px;
+
+    padding: 10px;
+
+    background: #2d1114;
+
+    border: 1px solid #f85149;
+
+    border-radius: 6px;
+
+    color: #ff7b72;
+
+    display: none;
+
+    z-index: 20;
+
+    font-size: 13px;
+}
+
+/* =========================================================
+   AUTOCOMPLÉTION
+========================================================= */
+
+#autocomplete {
+    position: absolute;
+
+    display: none;
+
+    min-width: 230px;
+    max-width: 330px;
+
+    max-height: 230px;
+
+    overflow-y: auto;
+
+    background: #161b22;
+
+    border: 1px solid #30363d;
+
+    border-radius: 6px;
+
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.45);
+
+    z-index: 50;
+
+    font-size: 13px;
+}
+
+.autocomplete-item {
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    padding: 7px 10px;
+
+    cursor: pointer;
+}
+
+.autocomplete-item:hover,
+.autocomplete-item.selected {
+    background: #1f6feb;
+    color: white;
+}
+
+.autocomplete-icon {
+    width: 20px;
+
+    text-align: center;
+
+    color: #79c0ff;
+}
+
+.autocomplete-name {
+    font-weight: bold;
+}
+
+.autocomplete-info {
+    margin-left: auto;
+
+    color: #8b949e;
+
+    font-size: 11px;
+}
+
+.autocomplete-item.selected .autocomplete-info {
+    color: #dbeafe;
+}
+
+/* =========================================================
+   CONSOLE
+========================================================= */
+
+#console {
+    height: 180px;
+
+    background: #010409;
+
+    border-top: 1px solid #30363d;
+
+    display: none;
+
+    flex-direction: column;
+}
+
+#consoleHeader {
+    height: 32px;
+
+    padding: 7px 10px;
+
+    color: #8b949e;
+
+    font-size: 12px;
+
+    border-bottom: 1px solid #21262d;
+}
+
+#output {
+    flex: 1;
+
+    padding: 10px;
+
+    overflow-y: auto;
+
+    white-space: pre-wrap;
+
+    font-size: 13px;
+}
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+#statusbar {
+    height: 25px;
+
+    background: #161b22;
+
+    border-top: 1px solid #30363d;
+
+    display: flex;
+
+    align-items: center;
+
+    padding: 0 10px;
+
+    font-size: 11px;
+
+    color: #8b949e;
+}
+
+.status-ok {
+    color: #3fb950;
+}
+
+.status-error {
+    color: #f85149;
+}
+
+/* =========================================================
+   FULLSCREEN
+========================================================= */
+
+.fullscreen #sidebar {
+    display: none;
+}
+
+.fullscreen #topbar {
+    display: none;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- =======================================================
+     TOPBAR
+======================================================== -->
+
+<div id="topbar">
+
+    <div id="title">
+        🐍 Python Runner
+    </div>
+
+    <button onclick="newFile()">
+        Nouveau
+    </button>
+
+    <button onclick="saveFile()">
+        Sauver
+    </button>
+
+    <button class="run" onclick="runCode()">
+        ▶ Exécuter
+    </button>
+
+    <button class="stop" onclick="stopCode()">
+        ■ Stop
+    </button>
+
+    <button onclick="toggleConsole()">
+        Console
+    </button>
+
+    <button onclick="toggleFullscreen()">
+        ⛶ Plein écran
+    </button>
+
+</div>
+
+
+<!-- =======================================================
+     MAIN
+======================================================== -->
+
+<div id="main">
+
+
+    <!-- SIDEBAR -->
+
+    <div id="sidebar">
+
+        <div class="sidebar-title">
+            EXPLORATEUR
+        </div>
+
+        <div id="files">
+
+            <div
+                class="file active"
+                onclick="selectFile('main.py')"
+            >
+                🐍 main.py
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- WORKSPACE -->
+
+    <div id="workspace">
+
+
+        <!-- EDITOR -->
+
+        <div id="editor">
+
+
+            <!-- LINE NUMBERS -->
+
+            <div id="lineNumbers">
+                1
+            </div>
+
+
+            <!-- CODE -->
+
+            <div id="codeContainer">
+
+                <pre id="highlight"></pre>
+
+                <textarea
+                    id="code"
+                    spellcheck="false"
+                    autocomplete="off"
+                    autocorrect="off"
+                    autocapitalize="off"
+                ></textarea>
+
+
+                <!-- AUTOCOMPLÉTION -->
+
+                <div id="autocomplete"></div>
+
+
+                <!-- ERROR -->
+
+                <div id="error-panel"></div>
+
+            </div>
+
+        </div>
+
+
+        <!-- CONSOLE -->
+
+        <div id="console">
+
+            <div id="consoleHeader">
+                TERMINAL
+            </div>
+
+            <pre id="output"></pre>
+
+        </div>
+
+
+        <!-- STATUS -->
+
+        <div id="statusbar">
+
+            <span id="status">
+                Prêt
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   ELEMENTS
+========================================================= */
+
+const code =
+    document.getElementById("code");
+
+const highlight =
+    document.getElementById("highlight");
+
+const lineNumbers =
+    document.getElementById("lineNumbers");
+
+const output =
+    document.getElementById("output");
+
+const consolePanel =
+    document.getElementById("console");
+
+const status =
+    document.getElementById("status");
+
+const errorPanel =
+    document.getElementById("error-panel");
+
+const autocomplete =
+    document.getElementById("autocomplete");
+
+
+/* =========================================================
+   VARIABLES
+========================================================= */
+
+let currentFile =
+    "main.py";
+
+let autosaveTimer =
+    null;
+
+let checkTimer =
+    null;
+
+let autocompleteIndex =
+    0;
+
+let autocompleteItems =
+    [];
+
+
+/* =========================================================
+   MOTS PYTHON
+========================================================= */
+
+const keywords = [
+
+    "and",
+    "as",
+    "assert",
+    "async",
+    "await",
+    "break",
+    "case",
+    "class",
+    "continue",
+    "def",
+    "del",
+    "elif",
+    "else",
+    "except",
+    "finally",
+    "for",
+    "from",
+    "global",
+    "if",
+    "import",
+    "in",
+    "is",
+    "lambda",
+    "match",
+    "nonlocal",
+    "not",
+    "or",
+    "pass",
+    "raise",
+    "return",
+    "try",
+    "while",
+    "with",
+    "yield"
+
+];
+
+
+const constants = [
+
+    "True",
+    "False",
+    "None"
+
+];
+
+
+/* =========================================================
+   AUTOCOMPLÉTION
+========================================================= */
+
+const pythonSuggestions = [
+
+    /* Fonctions */
+
+    {
+        name: "print",
+        icon: "ƒ",
+        info: "fonction"
+    },
+
+    {
+        name: "input",
+        icon: "ƒ",
+        info: "fonction"
+    },
+
+    {
+        name: "len",
+        icon: "ƒ",
+        info: "fonction"
+    },
+
+    {
+        name: "range",
+        icon: "ƒ",
+        info: "fonction"
+    },
+
+    {
+        name: "str",
+        icon: "ƒ",
+        info: "fonction"
+    },
+
+    {
+        name: "int",
+        icon: "ƒ",
+        info: "fonction"
+    },
+
+    {
+        name: "float",
+        icon: "ƒ",
+        info: "fonction"
+    },
+
+    {
+        name: "list",
+        icon: "ƒ",
+        info: "fonction"
+    },
+
+    {
+        name: "dict",
+        icon: "ƒ",
+        info: "fonction"
+    },
+
+    {
+        name: "set",
+        icon: "ƒ",
+        info: "fonction"
+    },
+
+    {
+        name: "tuple",
+        icon: "ƒ",
+        info: "fonction"
+    },
+
+    {
+        name: "open",
+        icon: "ƒ",
+        info: "fonction"
+    },
+
+    {
+        name: "sum",
+        icon: "ƒ",
+        info: "fonction"
+    },
+
+    {
+        name: "min",
+        icon: "ƒ",
+        info: "fonction"
+    },
+
+    {
+        name: "max",
+        icon: "ƒ",
+        info: "fonction"
+    },
+
+    {
+        name: "abs",
+        icon: "ƒ",
+        info: "fonction"
+    },
+
+    {
+        name: "round",
+        icon: "ƒ",
+        info: "fonction"
+    },
+
+    {
+        name: "enumerate",
+        icon: "ƒ",
+        info: "fonction"
+    },
+
+    {
+        name: "zip",
+        icon: "ƒ",
+        info: "fonction"
+    },
+
+    {
+        name: "sorted",
+        icon: "ƒ",
+        info: "fonction"
+    },
+
+    {
+        name: "type",
+        icon: "ƒ",
+        info: "fonction"
+    },
+
+    {
+        name: "isinstance",
+        icon: "ƒ",
+        info: "fonction"
+    },
+
+
+    /* Mots-clés */
+
+    {
+        name: "import",
+        icon: "K",
+        info: "mot-clé"
+    },
+
+    {
+        name: "from",
+        icon: "K",
+        info: "mot-clé"
+    },
+
+    {
+        name: "def",
+        icon: "K",
+        info: "mot-clé"
+    },
+
+    {
+        name: "class",
+        icon: "K",
+        info: "mot-clé"
+    },
+
+    {
+        name: "if",
+        icon: "K",
+        info: "mot-clé"
+    },
+
+    {
+        name: "elif",
+        icon: "K",
+        info: "mot-clé"
+    },
+
+    {
+        name: "else",
+        icon: "K",
+        info: "mot-clé"
+    },
+
+    {
+        name: "for",
+        icon: "K",
+        info: "mot-clé"
+    },
+
+    {
+        name: "while",
+        icon: "K",
+        info: "mot-clé"
+    },
+
+    {
+        name: "return",
+        icon: "K",
+        info: "mot-clé"
+    },
+
+    {
+        name: "try",
+        icon: "K",
+        info: "mot-clé"
+    },
+
+    {
+        name: "except",
+        icon: "K",
+        info: "mot-clé"
+    },
+
+    {
+        name: "finally",
+        icon: "K",
+        info: "mot-clé"
+    },
+
+    {
+        name: "with",
+        icon: "K",
+        info: "mot-clé"
+    },
+
+    {
+        name: "as",
+        icon: "K",
+        info: "mot-clé"
+    },
+
+    {
+        name: "pass",
+        icon: "K",
+        info: "mot-clé"
+    },
+
+    {
+        name: "break",
+        icon: "K",
+        info: "mot-clé"
+    },
+
+    {
+        name: "continue",
+        icon: "K",
+        info: "mot-clé"
+    },
+
+    {
+        name: "raise",
+        icon: "K",
+        info: "mot-clé"
+    },
+
+    {
+        name: "yield",
+        icon: "K",
+        info: "mot-clé"
+    },
+
+
+    /* Constantes */
+
+    {
+        name: "True",
+        icon: "C",
+        info: "constante"
+    },
+
+    {
+        name: "False",
+        icon: "C",
+        info: "constante"
+    },
+
+    {
+        name: "None",
+        icon: "C",
+        info: "constante"
+    }
+
+];
+
+
+/* =========================================================
+   ÉCHAPPER HTML
+========================================================= */
+
+function escapeHTML(text) {
+
+    return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+
+}
+
+
+/* =========================================================
+   COLORATION PYTHON
+========================================================= */
+
+function highlightPython(source) {
+
+    let escaped =
+        escapeHTML(source);
+
+
+    const strings = [];
+
+    escaped =
+        escaped.replace(
+            /("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')/g,
+            match => {
+
+                const id =
+                    strings.length;
+
+                strings.push(match);
+
+                return `___STRING_${id}___`;
+
+            }
+        );
+
+
+    const comments = [];
+
+    escaped =
+        escaped.replace(
+            /(#.*)$/gm,
+            match => {
+
+                const id =
+                    comments.length;
+
+                comments.push(match);
+
+                return `___COMMENT_${id}___`;
+
+            }
+        );
+
+
+    escaped =
+        escaped.replace(
+            /\b\d+(?:\.\d+)?\b/g,
+            '<span class="py-number">$&</span>'
+        );
+
+
+    escaped =
+        escaped.replace(
+            new RegExp(
+                "\\b(" +
+                keywords.join("|") +
+                ")\\b",
+                "g"
+            ),
+            '<span class="py-keyword">$1</span>'
+        );
+
+
+    escaped =
+        escaped.replace(
+            new RegExp(
+                "\\b(" +
+                constants.join("|") +
+                ")\\b",
+                "g"
+            ),
+            '<span class="py-constant">$1</span>'
+        );
+
+
+    escaped =
+        escaped.replace(
+            /\b([A-Za-z_][A-Za-z0-9_]*)(?=\s*\()/g,
+            '<span class="py-function">$1</span>'
+        );
+
+
+    strings.forEach(
+        (value, index) => {
+
+            escaped =
+                escaped.replace(
+                    `___STRING_${index}___`,
+                    `<span class="py-string">${value}</span>`
+                );
+
+        }
+    );
+
+
+    comments.forEach(
+        (value, index) => {
+
+            escaped =
+                escaped.replace(
+                    `___COMMENT_${index}___`,
+                    `<span class="py-comment">${value}</span>`
+                );
+
+        }
+    );
+
+
+    return escaped;
+
+}
+
+
+/* =========================================================
+   MISE À JOUR ÉDITEUR
+========================================================= */
+
+function updateEditor() {
+
+    highlight.innerHTML =
+        highlightPython(
+            code.value
+        ) + "\n";
+
+    updateLines();
+
+    syncScroll();
+
+}
+
+
+/* =========================================================
+   NUMÉROS DE LIGNES
+========================================================= */
+
+function updateLines() {
+
+    const count =
+        code.value.split("\n").length;
+
+
+    let html = "";
+
+    for (
+        let i = 1;
+        i <= count;
+        i++
+    ) {
+
+        html += i + "<br>";
+
+    }
+
+
+    lineNumbers.innerHTML =
+        html;
+
+}
+
+
+/* =========================================================
+   SCROLL SYNCHRONISÉ
+========================================================= */
+
+function syncScroll() {
+
+    highlight.scrollTop =
+        code.scrollTop;
+
+    highlight.scrollLeft =
+        code.scrollLeft;
+
+    lineNumbers.scrollTop =
+        code.scrollTop;
+
+}
+
+
+/* =========================================================
+   AUTOCOMPLÉTION : MOT ACTUEL
+========================================================= */
+
+function getCurrentWord() {
+
+    const position =
+        code.selectionStart;
+
+
+    const before =
+        code.value.substring(
+            0,
+            position
+        );
+
+
+    const match =
+        before.match(
+            /[A-Za-z_][A-Za-z0-9_]*$/
+        );
+
+
+    if (!match)
+        return "";
+
+
+    return match[0];
+
+}
+
+
+/* =========================================================
+   AUTOCOMPLÉTION : AFFICHER
+========================================================= */
+
+function showAutocomplete() {
+
+    const word =
+        getCurrentWord();
+
+
+    if (!word) {
+
+        hideAutocomplete();
+
+        return;
+
+    }
+
+
+    const search =
+        word.toLowerCase();
+
+
+    const results =
+        pythonSuggestions.filter(
+            item =>
+                item.name
+                    .toLowerCase()
+                    .startsWith(search)
+        );
+
+
+    if (!results.length) {
+
+        hideAutocomplete();
+
+        return;
+
+    }
+
+
+    autocompleteItems =
+        results.slice(0, 8);
+
+
+    autocompleteIndex =
+        0;
+
+
+    autocomplete.innerHTML =
+        "";
+
+
+    autocompleteItems.forEach(
+        (item, index) => {
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+
+            div.className =
+                "autocomplete-item";
+
+
+            if (index === 0) {
+
+                div.classList.add(
+                    "selected"
+                );
+
+            }
+
+
+            div.innerHTML = `
+
+                <span class="autocomplete-icon">
+                    ${item.icon}
+                </span>
+
+                <span class="autocomplete-name">
+                    ${item.name}
+                </span>
+
+                <span class="autocomplete-info">
+                    ${item.info}
+                </span>
+
+            `;
+
+
+            div.addEventListener(
+                "mousedown",
+                event => {
+
+                    event.preventDefault();
+
+                    insertAutocomplete(
+                        item.name
+                    );
+
+                }
+            );
+
+
+            autocomplete.appendChild(
+                div
+            );
+
+        }
+    );
+
+
+    positionAutocomplete();
+
+
+    autocomplete.style.display =
+        "block";
+
+}
+
+
+/* =========================================================
+   AUTOCOMPLÉTION : POSITION
+========================================================= */
+
+function positionAutocomplete() {
+
+    const lineHeight =
+        21;
+
+
+    const position =
+        code.selectionStart;
+
+
+    const text =
+        code.value.substring(
+            0,
+            position
+        );
+
+
+    const line =
+        text.split("\n").length;
+
+
+    const column =
+        text.length -
+        text.lastIndexOf("\n") -
+        1;
+
+
+    const top =
+        (line - 1) *
+        lineHeight +
+        35;
+
+
+    const left =
+        Math.min(
+            column * 8.4 + 18,
+            code.clientWidth - 250
+        );
+
+
+    autocomplete.style.top =
+        top + "px";
+
+
+    autocomplete.style.left =
+        Math.max(
+            5,
+            left
+        ) + "px";
+
+}
+
+
+/* =========================================================
+   AUTOCOMPLÉTION : INSÉRER
+========================================================= */
+
+function insertAutocomplete(word) {
+
+    const position =
+        code.selectionStart;
+
+
+    const before =
+        code.value.substring(
+            0,
+            position
+        );
+
+
+    const after =
+        code.value.substring(
+            position
+        );
+
+
+    const match =
+        before.match(
+            /[A-Za-z_][A-Za-z0-9_]*$/
+        );
+
+
+    if (!match)
+        return;
+
+
+    const start =
+        position -
+        match[0].length;
+
+
+    code.value =
+        code.value.substring(
+            0,
+            start
+        ) +
+
+        word +
+
+        after;
+
+
+    const newPosition =
+        start +
+        word.length;
+
+
+    code.selectionStart =
+        newPosition;
+
+    code.selectionEnd =
+        newPosition;
+
+
+    hideAutocomplete();
+
+    updateEditor();
+
+    checkCode();
+
+    code.focus();
+
+}
+
+
+/* =========================================================
+   AUTOCOMPLÉTION : CACHER
+========================================================= */
+
+function hideAutocomplete() {
+
+    autocomplete.style.display =
+        "none";
+
+}
+
+
+/* =========================================================
+   AUTOCOMPLÉTION : SÉLECTION
+========================================================= */
+
+function updateAutocompleteSelection() {
+
+    const items =
+        autocomplete.querySelectorAll(
+            ".autocomplete-item"
+        );
+
+
+    items.forEach(
+        (item, index) => {
+
+            item.classList.toggle(
+                "selected",
+                index ===
+                autocompleteIndex
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   CLAVIER
+========================================================= */
+
+code.addEventListener(
+    "keydown",
+    event => {
+
+
+        /* AUTOCOMPLÉTION */
+
+        if (
+            autocomplete.style.display ===
+            "block"
+        ) {
+
+
+            if (
+                event.key ===
+                "ArrowDown"
+            ) {
+
+                event.preventDefault();
+
+
+                autocompleteIndex =
+                    Math.min(
+                        autocompleteIndex + 1,
+                        autocompleteItems.length - 1
+                    );
+
+
+                updateAutocompleteSelection();
+
+                return;
+
+            }
+
+
+            if (
+                event.key ===
+                "ArrowUp"
+            ) {
+
+                event.preventDefault();
+
+
+                autocompleteIndex =
+                    Math.max(
+                        autocompleteIndex - 1,
+                        0
+                    );
+
+
+                updateAutocompleteSelection();
+
+                return;
+
+            }
+
+
+            if (
+                event.key === "Enter" ||
+                event.key === "Tab"
+            ) {
+
+                event.preventDefault();
+
+
+                const item =
+                    autocompleteItems[
+                        autocompleteIndex
+                    ];
+
+
+                if (item) {
+
+                    insertAutocomplete(
+                        item.name
+                    );
+
+                }
+
+
+                return;
+
+            }
+
+
+            if (
+                event.key ===
+                "Escape"
+            ) {
+
+                hideAutocomplete();
+
+                return;
+
+            }
+
+        }
+
+
+        /* TAB NORMAL */
+
+        if (
+            event.key === "Tab"
+        ) {
+
+            event.preventDefault();
+
+
+            const start =
+                code.selectionStart;
+
+            const end =
+                code.selectionEnd;
+
+
+            code.value =
+                code.value.substring(
+                    0,
+                    start
+                ) +
+
+                "    " +
+
+                code.value.substring(
+                    end
+                );
+
+
+            code.selectionStart =
+                start + 4;
+
+            code.selectionEnd =
+                start + 4;
+
+
+            updateEditor();
+
+            return;
+
+        }
+
+
+        /* CTRL + S */
+
+        if (
+            event.ctrlKey &&
+            event.key.toLowerCase() === "s"
+        ) {
+
+            event.preventDefault();
+
+            saveFile();
+
+        }
+
+
+        /* F5 */
+
+        if (
+            event.key === "F5"
+        ) {
+
+            event.preventDefault();
+
+            runCode();
+
+        }
+
+
+        /* ESCAPE */
+
+        if (
+            event.key === "Escape"
+        ) {
+
+            stopCode();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   INPUT
+========================================================= */
+
+code.addEventListener(
+    "input",
+    () => {
+
+        updateEditor();
+
+
+        clearTimeout(
+            checkTimer
+        );
+
+
+        checkTimer =
+            setTimeout(
+                checkCode,
+                400
+            );
+
+
+        clearTimeout(
+            autosaveTimer
+        );
+
+
+        autosaveTimer =
+            setTimeout(
+                saveFile,
+                1500
+            );
+
+
+        setTimeout(
+            showAutocomplete,
+            10
+        );
+
+    }
+);
+
+
+/* =========================================================
+   CLICK
+========================================================= */
+
+code.addEventListener(
+    "click",
+    () => {
+
+        hideAutocomplete();
+
+    }
+);
+
+
+/* =========================================================
+   SCROLL
+========================================================= */
+
+code.addEventListener(
+    "scroll",
+    () => {
+
+        syncScroll();
+
+        hideAutocomplete();
+
+    }
+);
+
+
+/* =========================================================
+   VÉRIFICATION PYTHON
+========================================================= */
+
+async function checkCode() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/check",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        content: code.value
+                    })
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        showError(data);
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+    }
+
+}
+
+
+/* =========================================================
+   AFFICHER ERREUR
+========================================================= */
+
+function showError(data) {
+
+    if (
+        data.ok
+    ) {
+
+        errorPanel.style.display =
+            "none";
+
+        status.textContent =
+            "✓ Code valide";
+
+        status.className =
+            "status-ok";
+
+        return;
+
+    }
+
+
+    errorPanel.style.display =
+        "block";
+
+
+    errorPanel.innerHTML = `
+
+        <strong>
+            ${data.type || "Erreur"}
+        </strong>
+
+        — ligne ${data.line || "?"}
+
+        <br>
+
+        ${data.message || "Erreur"}
+
+    `;
+
+
+    status.textContent =
+        "✕ Erreur";
+
+    status.className =
+        "status-error";
+
+}
+
+
+/* =========================================================
+   NOUVEAU
+========================================================= */
+
+function newFile() {
+
+    if (
+        code.value.trim() &&
+        !confirm(
+            "Créer un nouveau fichier ?"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    code.value = "";
+
+    currentFile =
+        "main.py";
+
+
+    updateEditor();
+
+    hideAutocomplete();
+
+    status.textContent =
+        "Nouveau fichier";
+
+}
+
+
+/* =========================================================
+   SAUVEGARDE
+========================================================= */
+
+async function saveFile() {
+
+    try {
+
+        await fetch(
+            "/api/save",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body: JSON.stringify({
+
+                    filename:
+                        currentFile,
+
+                    content:
+                        code.value
+
+                })
+
+            }
+        );
+
+
+        status.textContent =
+            "✓ Sauvegardé";
+
+
+        status.className =
+            "status-ok";
+
+    }
+
+    catch (error) {
+
+        status.textContent =
+            "Erreur sauvegarde";
+
+        status.className =
+            "status-error";
+
+    }
+
+}
+
+
+/* =========================================================
+   EXÉCUTER
+========================================================= */
+
+async function runCode() {
+
+    hideAutocomplete();
+
+    output.textContent =
+        "Exécution...\n";
+
+
+    consolePanel.style.display =
+        "flex";
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/run",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        filename:
+                            currentFile,
+
+                        content:
+                            code.value
+
+                    })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        output.textContent =
+            data.output ||
+            data.error ||
+            "";
+
+    }
+
+    catch (error) {
+
+        output.textContent =
+            String(error);
+
+    }
+
+}
+
+
+/* =========================================================
+   STOP
+========================================================= */
+
+async function stopCode() {
+
+    try {
+
+        await fetch(
+            "/api/stop",
+            {
+                method: "POST"
+            }
+        );
+
+        output.textContent +=
+            "\n[Programme arrêté]";
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+    }
+
+}
+
+
+/* =========================================================
+   CONSOLE
+========================================================= */
+
+function toggleConsole() {
+
+    if (
+        consolePanel.style.display ===
+        "flex"
+    ) {
+
+        consolePanel.style.display =
+            "none";
+
+    }
+
+    else {
+
+        consolePanel.style.display =
+            "flex";
+
+    }
+
+}
+
+
+/* =========================================================
+   PLEIN ÉCRAN
+========================================================= */
+
+function toggleFullscreen() {
+
+    document.body.classList.toggle(
+        "fullscreen"
+    );
+
+
+    if (
+        document.fullscreenElement
+    ) {
+
+        document.exitFullscreen();
+
+    }
+
+    else {
+
+        document.documentElement.requestFullscreen()
+            .catch(() => {});
+
+    }
+
+}
+
+
+/* =========================================================
+   FICHIER
+========================================================= */
+
+function selectFile(filename) {
+
+    currentFile =
+        filename;
+
+
+    document
+        .querySelectorAll(".file")
+        .forEach(
+            item =>
+                item.classList.remove(
+                    "active"
+                )
+        );
+
+
+    event?.currentTarget?.classList.add(
+        "active"
+    );
+
+}
+
+
+/* =========================================================
+   INITIALISATION
+========================================================= */
+
+code.value =
+`print("Bonjour !")
+
+`;
+
+updateEditor();
+
+checkCode();
+
+</script>
+
+</body>
+</html>
+```
